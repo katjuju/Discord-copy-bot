@@ -3,7 +3,7 @@ import discord
 from commands.CopyDiscordCommand import *
 from commands.PasteDiscordCommand import *
 
-from files.ConfigFile import *
+from file.ConfigFile import *
 
 from Logger import *
 

@@ -1,6 +1,6 @@
 from commands.Command import *
 
-from files.ConfigFile import *
+from file.ConfigFile import *
 
 class PasteDiscordCommand(Command):
 	def __init__(self, bot):
