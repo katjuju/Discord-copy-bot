@@ -4,6 +4,7 @@ from commands.Command import *
 
 from file.GuildFile import *
 
+from model.ChannelModel import *
 from model.GuildModel import *
 from model.EmojiModel import *
 from model.PermissionsModel import *
@@ -58,6 +59,25 @@ class CopyDiscordCommand(Command):
             emojis.append(emojiModel.__dict__);
 
         guildModel.emojis = emojis;
+
+        channels = list();
+        for channel in guild.channels:
+            channelModel = ChannelModel();
+
+            channelModel.id = channel.id;
+            channelModel.name = channel.name;
+            channelModel.topic = channel.topic;
+            channelModel.position = channel.position;
+            if(str(channel.type).isdigit()):
+                channelModel.type = channel.type
+            else:
+                channelModel.type = channel.type.value;
+            channelModel.bitrate = channel.bitrate;
+            channelModel.user_limit = channel.user_limit;
+
+            channels.append(channelModel.__dict__);
+
+        guildModel.channels = channels;
 
         file = GuildFile()
         file.saveGuild(guildModel);

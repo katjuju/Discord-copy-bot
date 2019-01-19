@@ -18,6 +18,7 @@ class GuildModel:
         self.mfaLevel = None;
         self.roles = None;
         self.emojis = None;
-        #Channels
+        self.channels = None;
+        #Channels overwrites
         #bans
         #Members
