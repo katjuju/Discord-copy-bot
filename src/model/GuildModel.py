@@ -15,7 +15,9 @@ class GuildModel:
         self.afkChannel  = None;
         self.verificationLevel = None;
         self.mfaLevel = None;
+        self.roles = None;
         #Roles
         #Emojis
         #Channels
         #bans
+        #Members

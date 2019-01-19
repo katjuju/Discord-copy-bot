@@ -10,7 +10,7 @@ from Logger import *
 class Bot(discord.Client):
 	def __init__(self):
 		discord.Client.__init__(self);
-		self.logger = Logger();
+		self.log = Logger();
 		self.config = ConfigFile();
 
 		self.commands = [CopyDiscordCommand(self), PasteDiscordCommand(self)];
@@ -19,7 +19,7 @@ class Bot(discord.Client):
 	async def on_ready(self):
 		await self.edit_profile(username="Discord Copy");
 		await self.change_presence(game=discord.Game(name=self.config.getDiscordCopyCommand()));
-		self.logger.info("Bot en ligne!");
+		self.log.info("Bot online!");
 
 
 	async def on_message(self, msg):
