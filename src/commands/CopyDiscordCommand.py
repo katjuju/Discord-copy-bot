@@ -22,6 +22,7 @@ class CopyDiscordCommand(Command):
         guildModel.name = guild.name;
         guildModel.region = guild.region.value;
         guildModel.icon = guild.icon;
+        guildModel.icon_url = guild.icon_url;
         guildModel.afkTimeout = guild.afk_timeout;
         guildModel.afkChannel  = guild.afk_channel.id;
         guildModel.verificationLevel = guild.verification_level.value;

@@ -11,6 +11,7 @@ class GuildModel:
         self.name = None;
         self.region = None;
         self.icon = None;
+        self.icon_url = None;
         self.afkTimeout = None;
         self.afkChannel  = None;
         self.verificationLevel = None;
