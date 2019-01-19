@@ -5,8 +5,9 @@ from commands.Command import *
 from file.GuildFile import *
 
 from model.GuildModel import *
-from model.RoleModel import *
+from model.EmojiModel import *
 from model.PermissionsModel import *
+from model.RoleModel import *
 
 class CopyDiscordCommand(Command):
     def __init__(self, bot):
@@ -42,6 +43,20 @@ class CopyDiscordCommand(Command):
             roles.append(roleModel.__dict__);
 
         guildModel.roles = roles;
+
+        emojis = list();
+        for emoji in guild.emojis:
+            emojiModel = EmojiModel();
+
+            emojiModel.id = emoji.id;
+            emojiModel.name = emoji.name;
+            emojiModel.require_colons = emoji.require_colons;
+            emojiModel.managed = emoji.managed;
+            emojiModel.url = emoji.url;
+
+            emojis.append(emojiModel.__dict__);
+
+        guildModel.emojis = emojis;
 
         file = GuildFile()
         file.saveGuild(guildModel);
