@@ -7,6 +7,7 @@ from file.GuildFile import *
 from model.ChannelModel import *
 from model.GuildModel import *
 from model.EmojiModel import *
+from model.MemberModel import *
 from model.PermissionsModel import *
 from model.RoleModel import *
 
@@ -78,6 +79,23 @@ class CopyDiscordCommand(Command):
             channels.append(channelModel.__dict__);
 
         guildModel.channels = channels;
+
+        members = list();
+        for member in guild.members:
+            memberModel = MemberModel();
+            memberModel.id = member.id;
+            memberModel.name = member.name;
+            memberModel.discriminator = member.discriminator;
+            memberModel.bot = member.bot;
+            memberModel.nick = member.nick;
+            memberModel.rolesId = list();
+
+            for role in member.roles:
+                memberModel.rolesId.append(role.id);
+
+            members.append(memberModel.__dict__);
+
+        guildModel.members = members;
 
         file = GuildFile()
         file.saveGuild(guildModel);

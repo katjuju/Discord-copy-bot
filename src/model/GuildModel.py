@@ -21,4 +21,4 @@ class GuildModel:
         self.channels = None;
         #Channels overwrites
         #bans
-        #Members
+        self.members = None;
