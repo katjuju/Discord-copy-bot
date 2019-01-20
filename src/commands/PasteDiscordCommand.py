@@ -32,7 +32,6 @@ class PasteDiscordCommand(Command):
         #TODO
         #afk channel
         #roles order
-        #emojis
         #channels
         #bans
         #members
@@ -54,6 +53,16 @@ class PasteDiscordCommand(Command):
                 colour=color,
                 hoist=role["hoist"],
                 mentionable=role["mentionable"]
+            );
+
+        for emoji in guildModel["emojis"]:
+            emojiByte = None;
+            with open("guilds/"+guildIdToRestore+"/emojis/"+emoji["id"]+".png", "rb") as imageFile:
+                emojiByte = imageFile.read()
+
+            await self.bot.create_custom_emoji(guild,
+                name=emoji["name"],
+                image=emojiByte
             );
 
         self.bot.log.info("Discord restored!");
