@@ -1,3 +1,5 @@
+from model.PermissionsModel import *
+
 class ChannelModel:
     def __init__(self):
         self.id = None;
@@ -8,3 +10,24 @@ class ChannelModel:
         self.bitrate = None;
         self.user_limit = None;
         self.overwrites = None;
+
+
+    def fillFromChannel(self, channel):
+        self.id = channel.id;
+        self.name = channel.name;
+        self.topic = channel.topic;
+        self.position = channel.position;
+        #type not defined in the enum
+        if(str(channel.type).isdigit()):
+            self.type = channel.type
+        else:
+            self.type = channel.type.value;
+        self.bitrate = channel.bitrate;
+        self.user_limit = channel.user_limit;
+
+        self.overwrites = dict();
+        for overwrite in channel.overwrites:
+            permissionsModel = PermissionsModel();
+            permissionsModel.fillFromPermissions(overwrite[1]);
+
+            self.overwrites[overwrite[0].id] = permissionsModel.__dict__;
