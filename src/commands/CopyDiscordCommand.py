@@ -20,5 +20,5 @@ class CopyDiscordCommand(Command):
         file = GuildFile()
         file.saveGuild(guildModel);
 
-        self.bot.log.info("File saved");
+        self.bot.log.info("Discord saved");
         await self.bot.send_message(msg.channel, "Discord copied!");
