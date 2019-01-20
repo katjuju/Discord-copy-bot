@@ -76,6 +76,10 @@ class CopyDiscordCommand(Command):
             channelModel.bitrate = channel.bitrate;
             channelModel.user_limit = channel.user_limit;
 
+            channelModel.overwrites = dict();
+            for overwrite in channel.overwrites:
+                channelModel.overwrites[overwrite[0].id] = self.getPermissionsModel(overwrite[1]).__dict__;
+
             channels.append(channelModel.__dict__);
 
         guildModel.channels = channels;
@@ -112,7 +116,8 @@ class CopyDiscordCommand(Command):
     def getPermissionsModel(self, permissions):
         permissionsModel = PermissionsModel();
 
-        permissionsModel.value = permissions.value;
+        if isinstance(permissions, PermissionsModel):
+            permissionsModel.value = permissions.value;
         permissionsModel.create_instant_invite = permissions.create_instant_invite;
         permissionsModel.kick_members = permissions.kick_members;
         permissionsModel.ban_members = permissions.ban_members;
