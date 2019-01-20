@@ -19,11 +19,11 @@ class GuildFile:
         file = open(basePath+guildModel.name+".json", "w");
         file.write(json.dumps(guildModel.__dict__, indent=4));
 
-        self.savePicture(guildModel.icon_url, basePath+guildModel.icon);
+        if guildModel.icon != None:
+            self.savePicture(guildModel.icon_url, basePath+guildModel.icon);
 
         for emoji in guildModel.emojis:
             self.savePicture(emoji["url"], basePath+"emojis/"+emoji["id"]);
-
 
 
     def savePicture(self, url, path):

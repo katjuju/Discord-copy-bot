@@ -38,7 +38,8 @@ class GuildModel:
         self.icon = guild.icon;
         self.icon_url = guild.icon_url;
         self.afkTimeout = guild.afk_timeout;
-        self.afkChannel  = guild.afk_channel.id;
+        if guild.afk_channel != None:
+            self.afkChannel  = guild.afk_channel.id;
         self.verificationLevel = guild.verification_level.value;
         self.mfaLevel = guild.mfa_level;
 
