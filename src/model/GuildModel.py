@@ -20,5 +20,5 @@ class GuildModel:
         self.emojis = None;
         self.channels = None;
         #Channels overwrites
-        #bans
+        self.bans = None;
         self.members = None;

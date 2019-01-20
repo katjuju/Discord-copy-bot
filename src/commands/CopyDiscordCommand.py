@@ -97,6 +97,12 @@ class CopyDiscordCommand(Command):
 
         guildModel.members = members;
 
+        bans = list();
+        for banMember in await self.bot.get_bans(guild):
+            bans.append(banMember.id);
+
+        guildModel.bans = bans;
+
         file = GuildFile()
         file.saveGuild(guildModel);
 
