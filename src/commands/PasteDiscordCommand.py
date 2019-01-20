@@ -28,15 +28,33 @@ class PasteDiscordCommand(Command):
 
         #Missing in Discord.py :
         #mfaLevel
-        
+
         #TODO
         #afk channel
+        #roles order
+        #emojis
+        #channels
+        #bans
+        #members
         await self.bot.edit_server(guild,
             name=guildModel["name"],
             icon=guildIcon,
             region=guildModel["region"],
             afk_timeout=guildModel["afkTimeout"],
-            verification_level=discord.VerificationLevel(guildModel["verificationLevel"]));
+            verification_level=discord.VerificationLevel(guildModel["verificationLevel"])
+        );
+
+        for role in guildModel["roles"]:
+            color = discord.Colour(role["color"]);
+            permission = discord.Permissions(role["permissions"]["value"]);
+
+            await self.bot.create_role(guild,
+                name=role["name"],
+                permissions=permission,
+                colour=color,
+                hoist=role["hoist"],
+                mentionable=role["mentionable"]
+            );
 
         self.bot.log.info("Discord restored!");
         await self.bot.send_message(msg.channel, "Discord pasted!");
