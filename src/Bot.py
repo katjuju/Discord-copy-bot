@@ -1,4 +1,4 @@
-import discord
+import libs.discord_py as discord
 
 from commands.CopyDiscordCommand import *
 from commands.PasteDiscordCommand import *

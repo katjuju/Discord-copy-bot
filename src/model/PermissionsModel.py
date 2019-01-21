@@ -1,4 +1,4 @@
-import discord
+import libs.discord_py as discord
 
 class PermissionsModel:
     def __init__(self):

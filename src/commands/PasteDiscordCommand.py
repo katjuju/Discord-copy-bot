@@ -3,7 +3,7 @@ from commands.Command import *
 from file.ConfigFile import *
 from file.GuildFile import *
 
-import discord
+import libs.discord_py as discord
 
 class PasteDiscordCommand(Command):
     def __init__(self, bot):
@@ -28,11 +28,12 @@ class PasteDiscordCommand(Command):
 
         #Missing in Discord.py :
         #mfaLevel
+        #channel parent
 
         #TODO
         #afk channel
         #roles order
-        #channels
+        #channel permissions overwrite
         #bans
         #members
         await self.bot.edit_server(guild,
@@ -64,6 +65,26 @@ class PasteDiscordCommand(Command):
                 name=emoji["name"],
                 image=emojiByte
             );
+
+        newChannels = dict();
+        for channel in guildModel["channels"]:
+
+            channelCreated = await self.bot.create_channel(guild,
+                name=channel["name"],
+                type=channel["type"]
+            );
+
+            await self.bot.edit_channel(channelCreated,
+                topic=channel["topic"],
+                bitrate=channel["bitrate"],
+                user_limit=channel["user_limit"]
+            );
+
+            newChannels[channel["id"]] = channelCreated;
+
+        for channel in guildModel["channels"]:
+            await self.bot.move_channel(newChannels[channel["id"]], channel["position"]);
+
 
         self.bot.log.info("Discord restored!");
         await self.bot.send_message(msg.channel, "Discord pasted!");
