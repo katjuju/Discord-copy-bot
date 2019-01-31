@@ -1,6 +1,6 @@
 {
 	"keys" : {
-		"discordBotToken" : "NDQxNTgyMDc5MzY1NDgwNDQ4.DyJntw._c5F8URZgFvlvrEFrD215CiAIp4"
+		"discordBotToken" : ""
 	},
 	"commands" : {
 		"discordCopy" : ".discordCopy",
