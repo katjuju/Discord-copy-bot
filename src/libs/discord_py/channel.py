@@ -83,7 +83,7 @@ class Channel(Hashable):
 
     __slots__ = [ 'voice_members', 'name', 'id', 'server', 'topic', 'position',
                   'is_private', 'type', 'bitrate', 'user_limit',
-                  '_permission_overwrites' ]
+                  '_permission_overwrites', 'parentId', 'nsfw', 'rate_limit_per_user' ]
 
     def __init__(self, **kwargs):
         self._update(**kwargs)
@@ -102,6 +102,10 @@ class Channel(Hashable):
         self.bitrate = kwargs.get('bitrate')
         self.type = kwargs.get('type')
         self.user_limit = kwargs.get('user_limit')
+        self.parentId = kwargs.get('parent_id')
+        self.nsfw = kwargs.get('nsfw')
+        self.rate_limit_per_user = kwargs.get('rate_limit_per_user')
+
         try:
             self.type = ChannelType(self.type)
         except:
@@ -442,5 +446,3 @@ class PrivateChannel(Hashable):
             base.kick_members = True
 
         return base
-
-
