@@ -68,19 +68,41 @@ class PasteDiscordCommand(Command):
 
         newChannels = dict();
         for channel in guildModel["channels"]:
+            if channel["type"] == 4:
 
-            channelCreated = await self.bot.create_channel(guild,
-                name=channel["name"],
-                type=channel["type"]
-            );
+                channelCreated = await self.bot.create_channel(guild,
+                    name=channel["name"],
+                    type=channel["type"]
+                );
 
-            await self.bot.edit_channel(channelCreated,
-                topic=channel["topic"],
-                bitrate=channel["bitrate"],
-                user_limit=channel["user_limit"]
-            );
+                newChannels[channel["id"]] = channelCreated;
 
-            newChannels[channel["id"]] = channelCreated;
+        for channel in guildModel["channels"]:
+            if channel["type"] != 4:
+                channelCreated = await self.bot.create_channel(guild,
+                    name=channel["name"],
+                    type=channel["type"]
+                );
+
+
+                if channel["parentId"] != None:
+                    await self.bot.edit_channel(channelCreated,
+                        topic=channel["topic"],
+                        bitrate=channel["bitrate"],
+                        user_limit=channel["user_limit"],
+                        parent_id=newChannels[channel["parentId"]].id,
+                        nsfw=channel["nsfw"]
+                    );
+
+                else:
+                    await self.bot.edit_channel(channelCreated,
+                        topic=channel["topic"],
+                        bitrate=channel["bitrate"],
+                        user_limit=channel["user_limit"],
+                        nsfw=channel["nsfw"]
+                    );
+
+                newChannels[channel["id"]] = channelCreated;
 
         for channel in guildModel["channels"]:
             await self.bot.move_channel(newChannels[channel["id"]], channel["position"]);
