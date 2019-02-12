@@ -8,12 +8,9 @@ from model.RoleModel import *
 class GuildModel:
 
     #Missing in Discord.py
-    #Overview -> Notification
-    #Overview -> Welcome Channel
-    #Moderation -> Message filter
     #Integration
     #Webhooks
-    #Widget
+    #Permissions -> Priority speaker
     def __init__(self):
         self.id = None;
         self.name = None;
@@ -29,6 +26,11 @@ class GuildModel:
         self.channels = None;
         self.bans = None;
         self.members = None;
+        self.default_message_notifications = None;
+        self.explicit_content_filter = None;
+        self.widget_enabled = False;
+        self.widget_channel_id = None;
+        self.system_channel_id = None;
 
 
     async def fillFromGuild(self, bot, guild):
@@ -42,6 +44,11 @@ class GuildModel:
             self.afkChannel  = guild.afk_channel.id;
         self.verificationLevel = guild.verification_level.value;
         self.mfaLevel = guild.mfa_level;
+        self.default_message_notifications = guild.default_message_notifications;
+        self.explicit_content_filter = guild.explicit_content_filter;
+        self.widget_enabled = guild.widget_enabled;
+        self.widget_channel_id = guild.widget_channel_id;
+        self.system_channel_id = guild.system_channel_id;
 
         self.roles = list();
         for role in guild.roles:

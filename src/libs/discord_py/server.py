@@ -112,7 +112,9 @@ class Server(Hashable):
                  'name', 'id', 'owner', 'unavailable', 'name', 'region',
                  '_default_role', '_default_channel', 'roles', '_member_count',
                  'large', 'owner_id', 'mfa_level', 'emojis', 'features',
-                 'verification_level', 'splash' ]
+                 'verification_level', 'splash', 'default_message_notifications',
+                 'explicit_content_filter', 'widget_enabled', 'widget_channel_id',
+                 'system_channel_id']
 
     def __init__(self, **kwargs):
         self._channels = {}
@@ -202,6 +204,13 @@ class Server(Hashable):
         self.emojis = [Emoji(server=self, **r) for r in guild.get('emojis', [])]
         self.features = guild.get('features', [])
         self.splash = guild.get('splash')
+        #TODO reimplement these fields
+        self.default_message_notifications = guild.get('default_message_notifications')
+        self.explicit_content_filter = guild.get('explicit_content_filter')
+        self.widget_enabled = guild.get('widget_enabled');
+        self.widget_channel_id = guild.get('widget_channel_id');
+        self.system_channel_id = guild.get('system_channel_id');
+        # reimplement until here
 
         for mdata in guild.get('members', []):
             roles = [self.default_role]

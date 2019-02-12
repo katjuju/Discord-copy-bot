@@ -28,7 +28,10 @@ class PasteDiscordCommand(Command):
 
         #Missing in Discord.py :
         #mfaLevel
-        #channel parent
+        #default_message_notifications
+        #explicit_content_filter
+        #widget
+        #system_channel_id
 
         #TODO
         #afk channel
@@ -36,6 +39,7 @@ class PasteDiscordCommand(Command):
         #channel permissions overwrite
         #bans
         #members
+        
         await self.bot.edit_server(guild,
             name=guildModel["name"],
             icon=guildIcon,
