@@ -34,17 +34,15 @@ class PasteDiscordCommand(Command):
         #system_channel_id
 
         #TODO
-        #afk channel
         #roles order
         #channel permissions overwrite
         #bans
         #members
-        
+
         await self.bot.edit_server(guild,
             name=guildModel["name"],
             icon=guildIcon,
             region=guildModel["region"],
-            afk_timeout=guildModel["afkTimeout"],
             verification_level=discord.VerificationLevel(guildModel["verificationLevel"])
         );
 
@@ -110,6 +108,11 @@ class PasteDiscordCommand(Command):
 
         for channel in guildModel["channels"]:
             await self.bot.move_channel(newChannels[channel["id"]], channel["position"]);
+
+        await self.bot.edit_server(guild,
+            afk_channel=newChannels[guildModel["afkChannel"]],
+            afk_timeout=guildModel["afkTimeout"]
+        );
 
 
         self.bot.log.info("Discord restored!");
