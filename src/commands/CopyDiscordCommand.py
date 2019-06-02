@@ -12,7 +12,7 @@ class CopyDiscordCommand(Command):
 
 
     async def run(self, msg):
-        guild = msg.server;
+        guild = msg.guild;
 
         guildModel = GuildModel();
         await guildModel.fillFromGuild(self.bot, guild);
@@ -21,4 +21,4 @@ class CopyDiscordCommand(Command):
         file.saveGuild(guildModel);
 
         self.bot.log.info("Discord saved");
-        await self.bot.send_message(msg.channel, "Discord copied!");
+        await msg.channel.send("Discord copied!");

@@ -9,26 +9,26 @@ class GuildFile:
 
 
     def loadGuild(self, guildId):
-        file = open("guilds/"+guildId+"/server.json", "r");
+        file = open("guilds/"+guildId+"/guild.json", "r");
         return json.load(file);
 
 
     def saveGuild(self, guildModel):
-        basePath = "guilds/"+guildModel.id+"_"+guildModel.name.replace(" ", "_")+"/";
+        basePath = "guilds/"+str(guildModel.id)+"_"+guildModel.name.replace(" ", "_")+"/";
 
         try:
             os.makedirs(basePath+"emojis");
         except OSError as exc:
             pass;
 
-        file = open(basePath+"server.json", "w");
+        file = open(basePath+"guild.json", "w");
         file.write(json.dumps(guildModel.__dict__, indent=4));
 
         if guildModel.icon != None:
             self.savePicture(guildModel.icon_url, basePath+"icon");
 
         for emoji in guildModel.emojis:
-            self.savePicture(emoji["url"], basePath+"emojis/"+emoji["id"]);
+            self.savePicture(emoji["url"], basePath+"emojis/"+str(emoji["id"]));
 
 
     def savePicture(self, url, path):

@@ -1,4 +1,6 @@
-from model.ChannelModel import *
+from model.CategoryModel import *
+from model.TextChannelModel import *
+from model.VoiceChannelModel import *
 from model.GuildModel import *
 from model.EmojiModel import *
 from model.MemberModel import *
@@ -23,14 +25,14 @@ class GuildModel:
         self.mfaLevel = None;
         self.roles = None;
         self.emojis = None;
-        self.channels = None;
+        self.categories = None;
+        self.text_channels = None;
+        self.voice_channels = None;
         self.bans = None;
         self.members = None;
         self.default_message_notifications = None;
         self.explicit_content_filter = None;
-        self.widget_enabled = False;
-        self.widget_channel_id = None;
-        self.system_channel_id = None;
+        self.system_channel = None;
 
 
     async def fillFromGuild(self, bot, guild):
@@ -38,19 +40,18 @@ class GuildModel:
         self.name = guild.name;
         self.region = guild.region.value;
         self.icon = guild.icon;
-        self.icon_url = guild.icon_url;
+        self.icon_url = str(guild.icon_url);
         self.afkTimeout = guild.afk_timeout;
         if guild.afk_channel != None:
             self.afkChannel  = guild.afk_channel.id;
         self.verificationLevel = guild.verification_level.value;
         self.mfaLevel = guild.mfa_level;
-        self.default_message_notifications = guild.default_message_notifications;
-        self.explicit_content_filter = guild.explicit_content_filter;
-        self.widget_enabled = guild.widget_enabled;
-        self.widget_channel_id = guild.widget_channel_id;
-        self.system_channel_id = guild.system_channel_id;
+        self.default_message_notifications = guild.default_notifications.value;
+        self.explicit_content_filter = guild.explicit_content_filter.value;
+        if guild.system_channel != None:
+            self.system_channel = guild.system_channel.id;
 
-        self.bot.log.info("Saving roles");
+        bot.log.info("Saving roles");
         self.roles = list();
         for role in guild.roles:
             roleModel = RoleModel();
@@ -58,7 +59,7 @@ class GuildModel:
 
             self.roles.append(roleModel.__dict__);
 
-        self.bot.log.info("Saving emojis");
+        bot.log.info("Saving emojis");
         self.emojis = list();
         for emoji in guild.emojis:
             emojiModel = EmojiModel();
@@ -66,15 +67,29 @@ class GuildModel:
 
             self.emojis.append(emojiModel.__dict__);
 
-        self.bot.log.info("Saving channels");
-        self.channels = list();
-        for channel in guild.channels:
-            channelModel = ChannelModel();
+        bot.log.info("Saving channels");
+        self.categories = list();
+        for channel in guild.categories:
+            channelModel = CategoryModel();
             channelModel.fillFromChannel(channel);
 
-            self.channels.append(channelModel.__dict__);
+            self.categories.append(channelModel.__dict__);
 
-        self.bot.log.info("Saving members");
+        self.text_channels = list();
+        for channel in guild.text_channels:
+            channelModel = TextChannelModel();
+            channelModel.fillFromChannel(channel);
+
+            self.text_channels.append(channelModel.__dict__);
+
+        self.voice_channels = list();
+        for channel in guild.voice_channels:
+            channelModel = VoiceChannelModel();
+            channelModel.fillFromChannel(channel);
+
+            self.voice_channels.append(channelModel.__dict__);
+
+        bot.log.info("Saving members");
         self.members = list();
         for member in guild.members:
             memberModel = MemberModel();
@@ -82,7 +97,7 @@ class GuildModel:
 
             self.members.append(memberModel.__dict__);
 
-        self.bot.log.info("Saving bans");
+        bot.log.info("Saving bans");
         self.bans = list();
-        for banMember in await bot.get_bans(guild):
-            self.bans.append(banMember.id);
+        for banMember in await guild.bans():
+            self.bans.append(banMember.user.id);

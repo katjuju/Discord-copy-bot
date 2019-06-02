@@ -1,11 +1,11 @@
-import libs.discord_py as discord
-
 from commands.CopyDiscordCommand import *
 from commands.PasteDiscordCommand import *
 
 from file.ConfigFile import *
 
 from Logger import *
+
+import discord
 
 class Bot(discord.Client):
 	def __init__(self):
@@ -17,8 +17,8 @@ class Bot(discord.Client):
 
 
 	async def on_ready(self):
-		await self.edit_profile(username="Discord Copy");
-		await self.change_presence(game=discord.Game(name=self.config.getDiscordCopyCommand()));
+		await self.user.edit(username="Discord Copy");
+		await self.change_presence(activity=discord.Game(name=self.config.getDiscordCopyCommand()));
 		self.log.info("Bot online!");
 
 

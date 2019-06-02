@@ -21,7 +21,7 @@ class RoleModel:
         self.hoist = role.hoist;
         self.position = role.position;
         self.mentionable = role.mentionable;
-        self.is_everyone = role.is_everyone;
+        self.is_everyone = role.is_default();
         self.managed = role.managed;
 
         permissionsModel = PermissionsModel();

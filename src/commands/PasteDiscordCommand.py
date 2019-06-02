@@ -3,7 +3,7 @@ from commands.Command import *
 from file.ConfigFile import *
 from file.GuildFile import *
 
-import libs.discord_py as discord
+import discord
 
 class PasteDiscordCommand(Command):
     def __init__(self, bot):
@@ -11,10 +11,10 @@ class PasteDiscordCommand(Command):
 
 
     async def run(self, msg):
-        guild = msg.server;
+        guild = msg.guild;
         args = msg.content.split(" ");
         if len(args) <= 1:
-            await self.bot.send_message(msg.channel, "Please, tell me the server to paste...");
+            await msg.channel.send("Please, tell me the guild to paste...");
             return;
 
         guildIdToRestore = args[1];
@@ -39,8 +39,7 @@ class PasteDiscordCommand(Command):
         #bans
         #members
 
-        await self.bot.edit_server(guild,
-            name=guildModel["name"],
+        await guild.edit(name=guildModel["name"],
             icon=guildIcon,
             region=guildModel["region"],
             verification_level=discord.VerificationLevel(guildModel["verificationLevel"])
@@ -50,7 +49,7 @@ class PasteDiscordCommand(Command):
             color = discord.Colour(role["color"]);
             permission = discord.Permissions(role["permissions"]["value"]);
 
-            await self.bot.create_role(guild,
+            await guild.create_role(
                 name=role["name"],
                 permissions=permission,
                 colour=color,
@@ -60,60 +59,64 @@ class PasteDiscordCommand(Command):
 
         for emoji in guildModel["emojis"]:
             emojiByte = None;
-            with open("guilds/"+guildIdToRestore+"/emojis/"+emoji["id"]+".png", "rb") as imageFile:
+            with open("guilds/"+guildIdToRestore+"/emojis/"+str(emoji["id"])+".png", "rb") as imageFile:
                 emojiByte = imageFile.read()
 
-            await self.bot.create_custom_emoji(guild,
+            await guild.create_custom_emoji(
                 name=emoji["name"],
                 image=emojiByte
             );
 
         newChannels = dict();
-        for channel in guildModel["channels"]:
-            if channel["type"] == 4:
+        for channel in guildModel["categories"]:
 
-                channelCreated = await self.bot.create_channel(guild,
-                    name=channel["name"],
-                    type=channel["type"]
-                );
+            channelCreated = await guild.create_category(
+                name=channel["name"]
+            );
 
-                newChannels[channel["id"]] = channelCreated;
+            newChannels[channel["id"]] = channelCreated;
 
-        for channel in guildModel["channels"]:
-            if channel["type"] != 4:
-                channelCreated = await self.bot.create_channel(guild,
-                    name=channel["name"],
-                    type=channel["type"]
-                );
+        for channel in guildModel["text_channels"]:
+            if channel["parentId"] == None:
+                category = None;
+            else:
+                category = newChannels[channel["parentId"]];
 
+            channelCreated = await guild.create_text_channel(
+                name=channel["name"],
+				nsfw=channel["nsfw"],
+                topic=channel["topic"],
+                slowmode_delay=channel["slowmode_delay"],
+                category=category
+            );
 
-                if channel["parentId"] != None:
-                    await self.bot.edit_channel(channelCreated,
-                        topic=channel["topic"],
-                        bitrate=channel["bitrate"],
-                        user_limit=channel["user_limit"],
-                        parent_id=newChannels[channel["parentId"]].id,
-                        nsfw=channel["nsfw"]
-                    );
+            newChannels[channel["id"]] = channelCreated;
 
-                else:
-                    await self.bot.edit_channel(channelCreated,
-                        topic=channel["topic"],
-                        bitrate=channel["bitrate"],
-                        user_limit=channel["user_limit"],
-                        nsfw=channel["nsfw"]
-                    );
+        for channel in guildModel["voice_channels"]:
+            if channel["parentId"] == None:
+                category = None;
+            else:
+                category = newChannels[channel["parentId"]];
 
-                newChannels[channel["id"]] = channelCreated;
+            channelCreated = await guild.create_voice_channel(
+                name=channel["name"],
+                bitrate=channel["bitrate"],
+                user_limit=channel["user_limit"],
+                category=category
+            );
 
-        for channel in guildModel["channels"]:
-            await self.bot.move_channel(newChannels[channel["id"]], channel["position"]);
+            newChannels[channel["id"]] = channelCreated;
 
-        await self.bot.edit_server(guild,
+        for channel in guildModel["text_channels"]:
+            await newChannels[channel["id"]].edit(position=channel["position"]);
+
+        for channel in guildModel["voice_channels"]:
+            await newChannels[channel["id"]].edit(position=channel["position"]);
+
+        await guild.edit(
             afk_channel=newChannels[guildModel["afkChannel"]],
             afk_timeout=guildModel["afkTimeout"]
         );
 
-
         self.bot.log.info("Discord restored!");
-        await self.bot.send_message(msg.channel, "Discord pasted!");
+        await msg.channel.send("Discord pasted!");

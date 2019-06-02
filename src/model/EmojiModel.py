@@ -8,4 +8,4 @@ class EmojiModel:
     def fillFromEmoji(self, emoji):
         self.id = emoji.id;
         self.name = emoji.name;
-        self.url = emoji.url;
+        self.url = str(emoji.url);

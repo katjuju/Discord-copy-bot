@@ -1,4 +1,4 @@
-import libs.discord_py as discord
+import discord
 
 class PermissionsModel:
     def __init__(self):
@@ -8,7 +8,7 @@ class PermissionsModel:
         self.ban_members = None;
         self.administrator = None;
         self.manage_channels = None;
-        self.manage_server = None;
+        self.manage_guild = None;
         self.add_reactions = None;
         self.view_audit_logs = None;
         self.read_messages = None;
@@ -41,9 +41,9 @@ class PermissionsModel:
         self.ban_members = permissions.ban_members;
         self.administrator = permissions.administrator;
         self.manage_channels = permissions.manage_channels;
-        self.manage_server = permissions.manage_server;
+        self.manage_guild = permissions.manage_guild;
         self.add_reactions = permissions.add_reactions;
-        self.view_audit_logs = permissions.view_audit_logs;
+        self.view_audit_logs = permissions.view_audit_log;
         self.read_messages = permissions.read_messages;
         self.send_messages = permissions.send_messages;
         self.send_tts_messages = permissions.send_tts_messages;
