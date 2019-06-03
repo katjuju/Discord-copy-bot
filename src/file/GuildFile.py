@@ -2,6 +2,7 @@ import json
 import requests
 
 import os
+import shutil
 
 class GuildFile:
     def __init__(self, bot):
@@ -18,6 +19,7 @@ class GuildFile:
 
         self.bot.log.info("Setting up save folder");
         try:
+            shutil.rmtree(basePath);
             os.makedirs(basePath+"emojis");
         except OSError as exc:
             pass;
