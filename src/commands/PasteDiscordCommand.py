@@ -50,14 +50,22 @@ class PasteDiscordCommand(Command):
         for role in guildModel["roles"]:
             color = discord.Colour(role["color"]);
             permission = discord.Permissions(role["permissions"]["value"]);
-
-            await guild.create_role(
-                name=role["name"],
-                permissions=permission,
-                colour=color,
-                hoist=role["hoist"],
-                mentionable=role["mentionable"]
-            );
+            if(role["is_everyone"]):
+                await guild.default_role.edit(
+                    name=role["name"],
+                    permissions=permission,
+                    colour=color,
+                    hoist=role["hoist"],
+                    mentionable=role["mentionable"]
+                );
+            else:
+                await guild.create_role(
+                    name=role["name"],
+                    permissions=permission,
+                    colour=color,
+                    hoist=role["hoist"],
+                    mentionable=role["mentionable"]
+                );
 
         for emoji in guildModel["emojis"]:
             emojiByte = None;
