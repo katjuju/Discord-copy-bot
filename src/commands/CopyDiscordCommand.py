@@ -12,6 +12,10 @@ class CopyDiscordCommand(Command):
 
 
     async def run(self, msg):
+        if not msg.author.guild_permissions.manage_guild:
+            await msg.channel.send("Only user with the \"Manage Guild\" permission can execute this command.");
+            return
+
         guild = msg.guild;
 
         guildModel = GuildModel();
