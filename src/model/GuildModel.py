@@ -10,10 +10,6 @@ from model.BanModel import *
 
 class GuildModel:
 
-    #Missing in Discord.py
-    #Integration
-    #Webhooks
-    #Permissions -> Priority speaker
     def __init__(self):
         self.id = None;
         self.name = None;

@@ -26,19 +26,6 @@ class PasteDiscordCommand(Command):
         with open("guilds/"+guildIdToRestore+"/icon.png", "rb") as imageFile:
             guildIcon = imageFile.read()
 
-        #Missing in Discord.py :
-        #mfaLevel
-        #default_message_notifications
-        #explicit_content_filter
-        #widget
-        #system_channel_id
-
-        #TODO
-        #roles order
-        #channel permissions overwrite
-        #bans
-        #members
-
         await guild.edit(name=guildModel["name"],
             icon=guildIcon,
             region=guildModel["region"],
@@ -136,12 +123,6 @@ class PasteDiscordCommand(Command):
             );
 
             newChannels[channel["id"]] = channelCreated;
-
-        for channel in guildModel["text_channels"]:
-            await newChannels[channel["id"]].edit(position=channel["position"]);
-
-        for channel in guildModel["voice_channels"]:
-            await newChannels[channel["id"]].edit(position=channel["position"]);
 
         for ban in guildModel["bans"]:
             banUser = await self.bot.fetch_user(ban["user"]);
