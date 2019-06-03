@@ -6,6 +6,7 @@ from model.EmojiModel import *
 from model.MemberModel import *
 from model.PermissionsModel import *
 from model.RoleModel import *
+from model.BanModel import *
 
 class GuildModel:
 
@@ -100,4 +101,7 @@ class GuildModel:
         bot.log.info("Saving bans");
         self.bans = list();
         for banMember in await guild.bans():
-            self.bans.append(banMember.user.id);
+            banModel = BanModel();
+            banModel.fillFromBan(banMember);
+
+            self.bans.append(banModel.__dict__);

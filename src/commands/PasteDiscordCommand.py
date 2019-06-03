@@ -115,6 +115,10 @@ class PasteDiscordCommand(Command):
         for channel in guildModel["voice_channels"]:
             await newChannels[channel["id"]].edit(position=channel["position"]);
 
+        for ban in guildModel["bans"]:
+            banUser = await self.bot.fetch_user(ban["user"]);
+            await guild.ban(banUser, reason=ban["reason"], delete_message_days=0);
+
         system_channel = None;
         if guildModel["system_channel"] != None:
             system_channel = newChannels[guildModel["system_channel"]]
