@@ -47,6 +47,7 @@ class PasteDiscordCommand(Command):
             explicit_content_filter=discord.ContentFilter(guildModel["explicit_content_filter"])
         );
 
+        newRoles = dict();
         for role in guildModel["roles"]:
             color = discord.Colour(role["color"]);
             permission = discord.Permissions(role["permissions"]["value"]);
@@ -58,14 +59,19 @@ class PasteDiscordCommand(Command):
                     hoist=role["hoist"],
                     mentionable=role["mentionable"]
                 );
+
+                roleCreated = guild.default_role;
+
             else:
-                await guild.create_role(
+                roleCreated = await guild.create_role(
                     name=role["name"],
                     permissions=permission,
                     colour=color,
                     hoist=role["hoist"],
                     mentionable=role["mentionable"]
                 );
+
+            newRoles[role["id"]] = roleCreated;
 
         for emoji in guildModel["emojis"]:
             emojiByte = None;
@@ -79,9 +85,13 @@ class PasteDiscordCommand(Command):
 
         newChannels = dict();
         for channel in guildModel["categories"]:
+            overwrites = {
+                newRoles[int(k)]: self.getOverwrites(v) for k, v in channel["overwrites"].items() if int(k) in newRoles
+            }
 
             channelCreated = await guild.create_category(
-                name=channel["name"]
+                name=channel["name"],
+                overwrites=overwrites
             );
 
             newChannels[channel["id"]] = channelCreated;
@@ -92,12 +102,17 @@ class PasteDiscordCommand(Command):
             else:
                 category = newChannels[channel["parentId"]];
 
+            overwrites = {
+                newRoles[int(k)]: self.getOverwrites(v) for k, v in channel["overwrites"].items() if int(k) in newRoles
+            }
+
             channelCreated = await guild.create_text_channel(
                 name=channel["name"],
 				nsfw=channel["nsfw"],
                 topic=channel["topic"],
                 slowmode_delay=channel["slowmode_delay"],
-                category=category
+                category=category,
+                overwrites=overwrites
             );
 
             newChannels[channel["id"]] = channelCreated;
@@ -108,11 +123,16 @@ class PasteDiscordCommand(Command):
             else:
                 category = newChannels[channel["parentId"]];
 
+            overwrites = {
+                newRoles[int(k)]: self.getOverwrites(v) for k, v in channel["overwrites"].items() if int(k) in newRoles
+            }
+
             channelCreated = await guild.create_voice_channel(
                 name=channel["name"],
                 bitrate=channel["bitrate"],
                 user_limit=channel["user_limit"],
-                category=category
+                category=category,
+                overwrites=overwrites
             );
 
             newChannels[channel["id"]] = channelCreated;
@@ -139,3 +159,37 @@ class PasteDiscordCommand(Command):
 
         self.bot.log.info("Discord restored!");
         await msg.channel.send("Discord pasted!");
+
+    def getOverwrites(self, permissions):
+        return discord.PermissionOverwrite(
+            create_instant_invite=permissions["create_instant_invite"],
+            kick_members=permissions["kick_members"],
+            ban_members=permissions["ban_members"],
+            administrator=permissions["administrator"],
+            manage_channels=permissions["manage_channels"],
+            manage_guild=permissions["manage_guild"],
+            add_reactions=permissions["add_reactions"],
+            view_audit_log=permissions["view_audit_logs"],
+            priority_speaker=permissions["priority_speaker"],
+            stream=permissions["stream"],
+            read_messages=permissions["read_messages"],
+            send_messages=permissions["send_messages"],
+            send_tts_messages=permissions["send_tts_messages"],
+            manage_messages=permissions["manage_messages"],
+            embed_links=permissions["embed_links"],
+            attach_files=permissions["attach_files"],
+            read_message_history=permissions["read_message_history"],
+            mention_everyone=permissions["mention_everyone"],
+            external_emojis=permissions["external_emojis"],
+            connect=permissions["connect"],
+            speak=permissions["speak"],
+            mute_members=permissions["mute_members"],
+            deafen_members=permissions["deafen_members"],
+            move_members=permissions["move_members"],
+            use_voice_activation=permissions["use_voice_activation"],
+            change_nickname=permissions["change_nickname"],
+            manage_nicknames=permissions["manage_nicknames"],
+            manage_roles=permissions["manage_roles"],
+            manage_webhooks=permissions["manage_webhooks"],
+            manage_emojis=permissions["manage_emojis"]
+        );

@@ -11,6 +11,8 @@ class PermissionsModel:
         self.manage_guild = None;
         self.add_reactions = None;
         self.view_audit_logs = None;
+        self.priority_speaker = None;
+        self.stream = None;
         self.read_messages = None;
         self.send_messages = None;
         self.send_tts_messages = None;
@@ -44,6 +46,8 @@ class PermissionsModel:
         self.manage_guild = permissions.manage_guild;
         self.add_reactions = permissions.add_reactions;
         self.view_audit_logs = permissions.view_audit_log;
+        self.priority_speaker = permissions.priority_speaker;
+        self.stream = permissions.stream;
         self.read_messages = permissions.read_messages;
         self.send_messages = permissions.send_messages;
         self.send_tts_messages = permissions.send_tts_messages;
