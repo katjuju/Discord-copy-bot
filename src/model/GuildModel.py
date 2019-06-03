@@ -48,7 +48,6 @@ class GuildModel:
         if guild.system_channel != None:
             self.system_channel = guild.system_channel.id;
 
-        bot.log.info("Saving roles");
         self.roles = list();
         for role in guild.roles:
             roleModel = RoleModel();
@@ -56,7 +55,6 @@ class GuildModel:
 
             self.roles.append(roleModel.__dict__);
 
-        bot.log.info("Saving emojis");
         self.emojis = list();
         for emoji in guild.emojis:
             emojiModel = EmojiModel();
@@ -64,7 +62,6 @@ class GuildModel:
 
             self.emojis.append(emojiModel.__dict__);
 
-        bot.log.info("Saving channels");
         self.categories = list();
         for channel in guild.categories:
             channelModel = CategoryModel();
@@ -86,7 +83,6 @@ class GuildModel:
 
             self.voice_channels.append(channelModel.__dict__);
 
-        bot.log.info("Saving members");
         self.members = list();
         for member in guild.members:
             memberModel = MemberModel();
@@ -94,7 +90,6 @@ class GuildModel:
 
             self.members.append(memberModel.__dict__);
 
-        bot.log.info("Saving bans");
         self.bans = list();
         for banMember in await guild.bans():
             banModel = BanModel();

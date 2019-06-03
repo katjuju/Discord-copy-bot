@@ -26,6 +26,8 @@ class PasteDiscordCommand(Command):
         with open("guilds/"+guildIdToRestore+"/icon.png", "rb") as imageFile:
             guildIcon = imageFile.read()
 
+
+        bot.log.info("Restoring Guild settings");
         await guild.edit(name=guildModel["name"],
             icon=guildIcon,
             region=guildModel["region"],
@@ -34,6 +36,7 @@ class PasteDiscordCommand(Command):
             explicit_content_filter=discord.ContentFilter(guildModel["explicit_content_filter"])
         );
 
+        bot.log.info("Restoring Guild roles");
         newRoles = dict();
         for role in guildModel["roles"]:
             color = discord.Colour(role["color"]);
@@ -60,6 +63,7 @@ class PasteDiscordCommand(Command):
 
             newRoles[role["id"]] = roleCreated;
 
+        bot.log.info("Restoring Guild emojis");
         for emoji in guildModel["emojis"]:
             emojiByte = None;
             with open("guilds/"+guildIdToRestore+"/emojis/"+str(emoji["id"])+".png", "rb") as imageFile:
@@ -70,6 +74,7 @@ class PasteDiscordCommand(Command):
                 image=emojiByte
             );
 
+        bot.log.info("Restoring Guild channels");
         newChannels = dict();
         for channel in guildModel["categories"]:
             overwrites = {
@@ -124,10 +129,12 @@ class PasteDiscordCommand(Command):
 
             newChannels[channel["id"]] = channelCreated;
 
+        bot.log.info("Restoring Guild bans");
         for ban in guildModel["bans"]:
             banUser = await self.bot.fetch_user(ban["user"]);
             await guild.ban(banUser, reason=ban["reason"], delete_message_days=0);
 
+        bot.log.info("Restoring Guild Post channel settings (AFK, System channel)");
         system_channel = None;
         if guildModel["system_channel"] != None:
             system_channel = newChannels[guildModel["system_channel"]]
