@@ -42,7 +42,9 @@ class PasteDiscordCommand(Command):
         await guild.edit(name=guildModel["name"],
             icon=guildIcon,
             region=guildModel["region"],
-            verification_level=discord.VerificationLevel(guildModel["verificationLevel"])
+            verification_level=discord.VerificationLevel(guildModel["verificationLevel"]),
+            default_notifications=guildModel["default_message_notifications"],
+            explicit_content_filter=discord.ContentFilter(guildModel["explicit_content_filter"])
         );
 
         for role in guildModel["roles"]:
@@ -113,9 +115,14 @@ class PasteDiscordCommand(Command):
         for channel in guildModel["voice_channels"]:
             await newChannels[channel["id"]].edit(position=channel["position"]);
 
+        system_channel = None;
+        if guildModel["system_channel"] != None:
+            system_channel = newChannels[guildModel["system_channel"]]
+
         await guild.edit(
             afk_channel=newChannels[guildModel["afkChannel"]],
-            afk_timeout=guildModel["afkTimeout"]
+            afk_timeout=guildModel["afkTimeout"],
+            system_channel=system_channel
         );
 
         self.bot.log.info("Discord restored!");
