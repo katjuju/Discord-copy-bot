@@ -149,6 +149,9 @@ class PasteDiscordCommand(Command):
             system_channel=system_channel
         );
 
+        if(guildModel["mfaLevel"]):
+            await msg.channel.send("The Discord server you pasted had \"Two-Factor Authentication\" enabled. Please, ask the owner to re-enable it on this Discord server.");
+
         self.bot.log.info("Discord restored!");
         await msg.channel.send("Discord pasted!");
 
