@@ -73,7 +73,7 @@ class PasteDiscordCommand(Command):
                         hoist=role["hoist"],
                         mentionable=role["mentionable"]
                     );
-                except HTTPException:
+                except discord.errors.HTTPException:
                     errorMsg = "You reached the role limit.";
                     self.bot.log.error(errorMsg);
                     await msg.channel.send(errorMsg);
@@ -92,7 +92,7 @@ class PasteDiscordCommand(Command):
                     name=emoji["name"],
                     image=emojiByte
                 );
-            except HTTPException:
+            except discord.errors.HTTPException:
                 errorMsg = "You reached the emoji limit.";
                 self.bot.log.error(errorMsg);
                 await msg.channel.send(errorMsg);
