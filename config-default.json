@@ -3,7 +3,7 @@
 		"discordBotToken" : ""
 	},
 	"commands" : {
-		"discordCopy" : ".discordCopy",
-		"discordPaste" : ".discordPaste"
+		"discordCopy" : ".guildCopy",
+		"discordPaste" : ".guildPaste"
 	}
 }
