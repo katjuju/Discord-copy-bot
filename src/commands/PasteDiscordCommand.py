@@ -17,11 +17,11 @@ class PasteDiscordCommand(Command):
 
         guild = msg.guild;
         args = msg.content.split(" ");
-        if len(args) <= 1:
+        if len(args) <= 2:
             await msg.channel.send("Please, tell me the guild to paste...");
             return;
 
-        guildIdToRestore = args[1];
+        guildIdToRestore = args[2];
 
         guildFile = GuildFile(self.bot);
         try:

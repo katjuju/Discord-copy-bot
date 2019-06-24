@@ -29,8 +29,8 @@ class Bot(discord.Client):
 
 	async def on_message(self, msg):
 		for command in self.commands:
-			await command.processMessage(msg);
-
+			if(await command.processMessage(msg)):
+				break;
 
 	def runBot(self):
 		self.run(self.config.getDiscordToken());

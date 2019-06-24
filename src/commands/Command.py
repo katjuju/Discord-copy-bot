@@ -6,9 +6,12 @@ class Command:
 	async def processMessage(self, msg):
 		if(msg.author.bot):
 			return;
-	
-		if(msg.content.startswith(self.commandLabel)):
+
+		if(msg.content.startswith("<@"+str(self.bot.user.id)+"> " + self.commandLabel)):
 			await self.run(msg);
+			return True;
+
+		return False;
 
 	async def run(self, msg):
 		pass;
