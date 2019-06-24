@@ -24,12 +24,20 @@ class PasteDiscordCommand(Command):
         guildIdToRestore = args[1];
 
         guildFile = GuildFile(self.bot);
-        guildModel = guildFile.loadGuild(guildIdToRestore);
+        try:
+            guildModel = guildFile.loadGuild(guildIdToRestore);
+        except:
+            errorMsg = "The \"guild.json\" file can't be found. Did you already saved this server?";
+            self.bot.log.error(errorMsg);
+            await msg.channel.send(errorMsg);
+            return;
 
         guildIcon = None;
-        with open("guilds/"+guildIdToRestore+"/icon.png", "rb") as imageFile:
-            guildIcon = imageFile.read()
-
+        try:
+            with open("guilds/"+guildIdToRestore+"/icon.png", "rb") as imageFile:
+                guildIcon = imageFile.read()
+        except:
+            pass;
 
         self.bot.log.info("Restoring Guild settings");
         await guild.edit(name=guildModel["name"],
@@ -57,13 +65,19 @@ class PasteDiscordCommand(Command):
                 roleCreated = guild.default_role;
 
             else:
-                roleCreated = await guild.create_role(
-                    name=role["name"],
-                    permissions=permission,
-                    colour=color,
-                    hoist=role["hoist"],
-                    mentionable=role["mentionable"]
-                );
+                try:
+                    roleCreated = await guild.create_role(
+                        name=role["name"],
+                        permissions=permission,
+                        colour=color,
+                        hoist=role["hoist"],
+                        mentionable=role["mentionable"]
+                    );
+                except HTTPException:
+                    errorMsg = "You reached the role limit.";
+                    self.bot.log.error(errorMsg);
+                    await msg.channel.send(errorMsg);
+                    break;
 
             newRoles[role["id"]] = roleCreated;
 
@@ -73,10 +87,16 @@ class PasteDiscordCommand(Command):
             with open("guilds/"+guildIdToRestore+"/emojis/"+str(emoji["id"])+".png", "rb") as imageFile:
                 emojiByte = imageFile.read()
 
-            await guild.create_custom_emoji(
-                name=emoji["name"],
-                image=emojiByte
-            );
+            try:
+                await guild.create_custom_emoji(
+                    name=emoji["name"],
+                    image=emojiByte
+                );
+            except HTTPException:
+                errorMsg = "You reached the emoji limit.";
+                self.bot.log.error(errorMsg);
+                await msg.channel.send(errorMsg);
+                break;
 
         self.bot.log.info("Restoring Guild channels");
         newChannels = dict();
@@ -143,8 +163,10 @@ class PasteDiscordCommand(Command):
         if guildModel["system_channel"] != None:
             system_channel = newChannels[guildModel["system_channel"]]
 
+        afkChannel = None if guildModel["afkChannel"] == None else newChannels[guildModel["afkChannel"]];
+
         await guild.edit(
-            afk_channel=newChannels[guildModel["afkChannel"]],
+            afk_channel=afkChannel,
             afk_timeout=guildModel["afkTimeout"],
             system_channel=system_channel
         );

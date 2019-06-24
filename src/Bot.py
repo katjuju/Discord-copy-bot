@@ -7,11 +7,16 @@ from Logger import *
 
 import discord
 
+import sys
+
 class Bot(discord.Client):
 	def __init__(self):
 		discord.Client.__init__(self);
 		self.log = Logger();
-		self.config = ConfigFile();
+		self.config = ConfigFile(self);
+
+		if(self.config.configError):
+			sys.exit();
 
 		self.commands = [CopyDiscordCommand(self), PasteDiscordCommand(self)];
 

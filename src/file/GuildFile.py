@@ -19,7 +19,9 @@ class GuildFile:
 
         self.bot.log.info("Setting up save folder");
         try:
-            shutil.rmtree(basePath);
+            if(os.path.exists(basePath)):
+                shutil.rmtree(basePath);
+
             os.makedirs(basePath+"emojis");
         except OSError as exc:
             pass;
