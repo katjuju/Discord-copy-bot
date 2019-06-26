@@ -85,7 +85,7 @@ class PasteGuildExecutor:
         self.bot.log.info("Restoring Guild roles");
 
         self.newRoles = dict();
-        for role in self.guildModel["roles"]:
+        for role in self.sortList(self.guildModel["roles"], True):
             color = discord.Colour(role["color"]);
             permission = discord.Permissions(role["permissions"]["value"]);
 
@@ -142,7 +142,7 @@ class PasteGuildExecutor:
         self.bot.log.info("Restoring Guild channels");
 
         self.newChannels = dict();
-        for channel in self.guildModel["categories"]:
+        for channel in self.sortList(self.guildModel["categories"]):
             overwrites = {
                 self.newRoles[int(k)]: self.getOverwrites(v) for k, v in channel["overwrites"].items() if int(k) in self.newRoles
             }
@@ -154,7 +154,7 @@ class PasteGuildExecutor:
 
             self.newChannels[channel["id"]] = channelCreated;
 
-        for channel in self.guildModel["text_channels"]:
+        for channel in self.sortList(self.guildModel["text_channels"]):
             if channel["parentId"] == None:
                 category = None;
             else:
@@ -175,7 +175,7 @@ class PasteGuildExecutor:
 
             self.newChannels[channel["id"]] = channelCreated;
 
-        for channel in self.guildModel["voice_channels"]:
+        for channel in self.sortList(self.guildModel["voice_channels"]):
             if channel["parentId"] == None:
                 category = None;
             else:
@@ -253,3 +253,17 @@ class PasteGuildExecutor:
             manage_webhooks=permissions["manage_webhooks"],
             manage_emojis=permissions["manage_emojis"]
         );
+
+
+    def sortList(self, list, reversed = False):
+        n = len(list);
+        for i in range(n):
+            k = i;
+            for j in range(i+1, n):
+                if list[k]["position"] > list[j]["position"] and not reversed:
+                    k = j;
+                elif list[k]["position"] < list[j]["position"] and reversed:
+                    k = j;
+            list[k], list[i] = list[i], list[k];
+
+        return list;
