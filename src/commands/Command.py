@@ -7,7 +7,8 @@ class Command:
 		if(msg.author.bot):
 			return;
 
-		if(msg.content.startswith("<@"+str(self.bot.user.id)+"> " + self.commandLabel)):
+		if(	msg.content.startswith("<@"+str(self.bot.user.id)+"> " + self.commandLabel) or
+			msg.content.startswith("<@!"+str(self.bot.user.id)+"> " + self.commandLabel)):
 			await self.run(msg);
 			return True;
 
