@@ -32,29 +32,65 @@ class PasteDiscordCommand(Command):
             await msg.channel.send(errorMsg);
             return;
 
+        executor = PasteGuildExecutor(self.bot, guild, guildModel, guildIdToRestore, msg);
+        await executor.pasteGuild();
+
+
+class PasteGuildExecutor:
+
+    def __init__(self, bot, guild, guildModel, guildIdToRestore, msg):
+        self.bot = bot;
+        self.guild = guild;
+        self.guildModel = guildModel;
+        self.guildIdToRestore = guildIdToRestore;
+        self.msg = msg;
+
+
+    async def pasteGuild(self):
+        await self.pasteGuildSettings();
+        await self.pasteGuildRoles();
+        await self.pasteGuildEmojis();
+        await self.pasteGuildChannels();
+        await self.pasteGuildBans();
+        await self.pasteGuildPostChannelSettings();
+
+        self.bot.log.info("Discord restored!");
+        await self.msg.channel.send("Discord pasted!");
+
+
+    async def pasteGuildSettings(self):
+        self.bot.log.info("Restoring Guild settings");
+
         guildIcon = None;
         try:
-            with open("guilds/"+guildIdToRestore+"/icon.png", "rb") as imageFile:
+            with open("guilds/"+self.guildIdToRestore+"/icon.png", "rb") as imageFile:
                 guildIcon = imageFile.read()
         except:
             pass;
 
-        self.bot.log.info("Restoring Guild settings");
-        await guild.edit(name=guildModel["name"],
+        await self.guild.edit(
+            name=self.guildModel["name"],
             icon=guildIcon,
-            region=guildModel["region"],
-            verification_level=discord.VerificationLevel(guildModel["verificationLevel"]),
-            default_notifications=guildModel["default_message_notifications"],
-            explicit_content_filter=discord.ContentFilter(guildModel["explicit_content_filter"])
+            region=self.guildModel["region"],
+            verification_level=discord.VerificationLevel(self.guildModel["verificationLevel"]),
+            default_notifications=self.guildModel["default_message_notifications"],
+            explicit_content_filter=discord.ContentFilter(self.guildModel["explicit_content_filter"])
         );
 
+        if(self.guildModel["mfaLevel"]):
+            await self.msg.channel.send("The Discord server you pasted had \"Two-Factor Authentication\" enabled. Please, ask the owner to re-enable it on this Discord server.");
+
+
+    async def pasteGuildRoles(self):
         self.bot.log.info("Restoring Guild roles");
-        newRoles = dict();
-        for role in guildModel["roles"]:
+
+        self.newRoles = dict();
+        for role in self.guildModel["roles"]:
             color = discord.Colour(role["color"]);
             permission = discord.Permissions(role["permissions"]["value"]);
+
             if(role["is_everyone"]):
-                await guild.default_role.edit(
+                await self.guild.default_role.edit(
                     name=role["name"],
                     permissions=permission,
                     colour=color,
@@ -62,11 +98,11 @@ class PasteDiscordCommand(Command):
                     mentionable=role["mentionable"]
                 );
 
-                roleCreated = guild.default_role;
+                roleCreated = self.guild.default_role;
 
             else:
                 try:
-                    roleCreated = await guild.create_role(
+                    roleCreated = await self.guild.create_role(
                         name=role["name"],
                         permissions=permission,
                         colour=color,
@@ -76,53 +112,59 @@ class PasteDiscordCommand(Command):
                 except discord.errors.HTTPException:
                     errorMsg = "You reached the role limit.";
                     self.bot.log.error(errorMsg);
-                    await msg.channel.send(errorMsg);
+                    await self.msg.channel.send(errorMsg);
                     break;
 
-            newRoles[role["id"]] = roleCreated;
+            self.newRoles[role["id"]] = roleCreated;
 
+
+    async def pasteGuildEmojis(self):
         self.bot.log.info("Restoring Guild emojis");
-        for emoji in guildModel["emojis"]:
+
+        for emoji in self.guildModel["emojis"]:
             emojiByte = None;
-            with open("guilds/"+guildIdToRestore+"/emojis/"+str(emoji["id"])+".png", "rb") as imageFile:
+            with open("guilds/"+self.guildIdToRestore+"/emojis/"+str(emoji["id"])+".png", "rb") as imageFile:
                 emojiByte = imageFile.read()
 
             try:
-                await guild.create_custom_emoji(
+                await self.guild.create_custom_emoji(
                     name=emoji["name"],
                     image=emojiByte
                 );
             except discord.errors.HTTPException:
                 errorMsg = "You reached the emoji limit.";
                 self.bot.log.error(errorMsg);
-                await msg.channel.send(errorMsg);
+                await self.msg.channel.send(errorMsg);
                 break;
 
+
+    async def pasteGuildChannels(self):
         self.bot.log.info("Restoring Guild channels");
-        newChannels = dict();
-        for channel in guildModel["categories"]:
+
+        self.newChannels = dict();
+        for channel in self.guildModel["categories"]:
             overwrites = {
-                newRoles[int(k)]: self.getOverwrites(v) for k, v in channel["overwrites"].items() if int(k) in newRoles
+                self.newRoles[int(k)]: self.getOverwrites(v) for k, v in channel["overwrites"].items() if int(k) in self.newRoles
             }
 
-            channelCreated = await guild.create_category(
+            channelCreated = await self.guild.create_category(
                 name=channel["name"],
                 overwrites=overwrites
             );
 
-            newChannels[channel["id"]] = channelCreated;
+            self.newChannels[channel["id"]] = channelCreated;
 
-        for channel in guildModel["text_channels"]:
+        for channel in self.guildModel["text_channels"]:
             if channel["parentId"] == None:
                 category = None;
             else:
-                category = newChannels[channel["parentId"]];
+                category = self.newChannels[channel["parentId"]];
 
             overwrites = {
-                newRoles[int(k)]: self.getOverwrites(v) for k, v in channel["overwrites"].items() if int(k) in newRoles
+                self.newRoles[int(k)]: self.getOverwrites(v) for k, v in channel["overwrites"].items() if int(k) in self.newRoles
             }
 
-            channelCreated = await guild.create_text_channel(
+            channelCreated = await self.guild.create_text_channel(
                 name=channel["name"],
 				nsfw=channel["nsfw"],
                 topic=channel["topic"],
@@ -131,19 +173,19 @@ class PasteDiscordCommand(Command):
                 overwrites=overwrites
             );
 
-            newChannels[channel["id"]] = channelCreated;
+            self.newChannels[channel["id"]] = channelCreated;
 
-        for channel in guildModel["voice_channels"]:
+        for channel in self.guildModel["voice_channels"]:
             if channel["parentId"] == None:
                 category = None;
             else:
-                category = newChannels[channel["parentId"]];
+                category = self.newChannels[channel["parentId"]];
 
             overwrites = {
-                newRoles[int(k)]: self.getOverwrites(v) for k, v in channel["overwrites"].items() if int(k) in newRoles
+                self.newRoles[int(k)]: self.getOverwrites(v) for k, v in channel["overwrites"].items() if int(k) in self.newRoles
             }
 
-            channelCreated = await guild.create_voice_channel(
+            channelCreated = await self.guild.create_voice_channel(
                 name=channel["name"],
                 bitrate=channel["bitrate"],
                 user_limit=channel["user_limit"],
@@ -151,31 +193,32 @@ class PasteDiscordCommand(Command):
                 overwrites=overwrites
             );
 
-            newChannels[channel["id"]] = channelCreated;
+            self.newChannels[channel["id"]] = channelCreated;
 
+
+    async def pasteGuildBans(self):
         self.bot.log.info("Restoring Guild bans");
-        for ban in guildModel["bans"]:
+
+        for ban in self.guildModel["bans"]:
             banUser = await self.bot.fetch_user(ban["user"]);
-            await guild.ban(banUser, reason=ban["reason"], delete_message_days=0);
+            await self.guild.ban(banUser, reason=ban["reason"], delete_message_days=0);
 
+
+    async def pasteGuildPostChannelSettings(self):
         self.bot.log.info("Restoring Guild Post channel settings (AFK, System channel)");
+
         system_channel = None;
-        if guildModel["system_channel"] != None:
-            system_channel = newChannels[guildModel["system_channel"]]
+        if self.guildModel["system_channel"] != None:
+            system_channel = self.newChannels[self.guildModel["system_channel"]]
 
-        afkChannel = None if guildModel["afkChannel"] == None else newChannels[guildModel["afkChannel"]];
+        afkChannel = None if self.guildModel["afkChannel"] == None else self.newChannels[self.guildModel["afkChannel"]];
 
-        await guild.edit(
+        await self.guild.edit(
             afk_channel=afkChannel,
-            afk_timeout=guildModel["afkTimeout"],
+            afk_timeout=self.guildModel["afkTimeout"],
             system_channel=system_channel
         );
 
-        if(guildModel["mfaLevel"]):
-            await msg.channel.send("The Discord server you pasted had \"Two-Factor Authentication\" enabled. Please, ask the owner to re-enable it on this Discord server.");
-
-        self.bot.log.info("Discord restored!");
-        await msg.channel.send("Discord pasted!");
 
     def getOverwrites(self, permissions):
         return discord.PermissionOverwrite(
