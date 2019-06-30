@@ -3,6 +3,9 @@ from commands.Command import *
 from file.ConfigFile import *
 from file.GuildFile import *
 
+from utils.const import *
+from utils.EmbedStatus import *
+
 import discord
 
 class PasteDiscordCommand(Command):
@@ -47,6 +50,15 @@ class PasteGuildExecutor:
 
 
     async def pasteGuild(self):
+        self.embedStatus = EmbedStatus("Pasting Discord");
+        self.embedStatus.addField("General Settings");
+        self.embedStatus.addField("Roles");
+        self.embedStatus.addField("Emojis");
+        self.embedStatus.addField("Channels");
+        self.embedStatus.addField("Bans");
+        self.embedStatus.addField("Post channels settings");
+        await self.embedStatus.post(self.msg.channel);
+
         await self.pasteGuildSettings();
         await self.pasteGuildRoles();
         await self.pasteGuildEmojis();
@@ -55,8 +67,6 @@ class PasteGuildExecutor:
         await self.pasteGuildPostChannelSettings();
 
         self.bot.log.info("Discord restored!");
-        await self.msg.channel.send("Discord pasted!");
-
 
     async def pasteGuildSettings(self):
         self.bot.log.info("Restoring Guild settings");
@@ -77,9 +87,8 @@ class PasteGuildExecutor:
             explicit_content_filter=discord.ContentFilter(self.guildModel["explicit_content_filter"])
         );
 
-        if(self.guildModel["mfaLevel"]):
-            await self.msg.channel.send("The Discord server you pasted had \"Two-Factor Authentication\" enabled. Please, ask the owner to re-enable it on this Discord server.");
-
+        message = "The Discord server you pasted had \"Two-Factor Authentication\" enabled. Please, ask the owner to re-enable it on this Discord server." if self.guildModel["mfaLevel"] else "";
+        await self.embedStatus.setStatus(CONST_STATUS_OK, message=message);
 
     async def pasteGuildRoles(self):
         self.bot.log.info("Restoring Guild roles");
@@ -112,10 +121,12 @@ class PasteGuildExecutor:
                 except discord.errors.HTTPException:
                     errorMsg = "You reached the role limit.";
                     self.bot.log.error(errorMsg);
-                    await self.msg.channel.send(errorMsg);
-                    break;
+                    await self.embedStatus.setStatus(CONST_STATUS_FAIL, message=errorMsg);
+                    return;
 
             self.newRoles[role["id"]] = roleCreated;
+
+        await self.embedStatus.setStatus(CONST_STATUS_OK);
 
 
     async def pasteGuildEmojis(self):
@@ -134,8 +145,10 @@ class PasteGuildExecutor:
             except discord.errors.HTTPException:
                 errorMsg = "You reached the emoji limit.";
                 self.bot.log.error(errorMsg);
-                await self.msg.channel.send(errorMsg);
-                break;
+                await self.embedStatus.setStatus(CONST_STATUS_FAIL, message=errorMsg);
+                return;
+
+        await self.embedStatus.setStatus(CONST_STATUS_OK);
 
 
     async def pasteGuildChannels(self):
@@ -195,6 +208,8 @@ class PasteGuildExecutor:
 
             self.newChannels[channel["id"]] = channelCreated;
 
+        await self.embedStatus.setStatus(CONST_STATUS_OK);
+
 
     async def pasteGuildBans(self):
         self.bot.log.info("Restoring Guild bans");
@@ -202,6 +217,8 @@ class PasteGuildExecutor:
         for ban in self.guildModel["bans"]:
             banUser = await self.bot.fetch_user(ban["user"]);
             await self.guild.ban(banUser, reason=ban["reason"], delete_message_days=0);
+
+        await self.embedStatus.setStatus(CONST_STATUS_OK);
 
 
     async def pasteGuildPostChannelSettings(self):
@@ -218,6 +235,8 @@ class PasteGuildExecutor:
             afk_timeout=self.guildModel["afkTimeout"],
             system_channel=system_channel
         );
+
+        await self.embedStatus.setStatus(CONST_STATUS_OK);
 
 
     def getOverwrites(self, permissions):

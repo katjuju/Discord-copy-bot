@@ -4,6 +4,8 @@ import requests
 import os
 import shutil
 
+from utils.EmbedStatus import *
+
 class GuildFile:
     def __init__(self, bot):
     	self.bot = bot;
@@ -14,8 +16,17 @@ class GuildFile:
         return json.load(file);
 
 
-    def saveGuild(self, guildModel):
+    async def saveGuild(self, guildModel, channel=None):
         basePath = "guilds/"+str(guildModel.id)+"_"+guildModel.name.replace(" ", "_")+"/";
+
+        self.embedStatus = EmbedStatus("Copying Discord");
+        self.embedStatus.addField("Set up save folder");
+        self.embedStatus.addField("Guild informations");
+        self.embedStatus.addField("Guild's Icon");
+        self.embedStatus.addField("Guild's emojis");
+
+        if(channel != None):
+            await self.embedStatus.post(channel);
 
         self.bot.log.info("Setting up save folder");
         try:
@@ -26,18 +37,26 @@ class GuildFile:
         except OSError as exc:
             pass;
 
+        await self.embedStatus.setStatus(CONST_STATUS_OK);
+
         self.bot.log.info("Saving Guild informations");
         file = open(basePath+"guild.json", "w");
         file.write(json.dumps(guildModel.__dict__, indent=4));
+
+        await self.embedStatus.setStatus(CONST_STATUS_OK);
 
         self.bot.log.info("Saving Guild's Icon");
         if guildModel.icon != None:
             self.savePicture(guildModel.icon_url, basePath+"icon");
 
+        await self.embedStatus.setStatus(CONST_STATUS_OK);
+
+
         self.bot.log.info("Saving Guild's emojis");
         for emoji in guildModel.emojis:
             self.savePicture(emoji["url"], basePath+"emojis/"+str(emoji["id"]));
 
+        await self.embedStatus.setStatus(CONST_STATUS_OK);
 
     def savePicture(self, url, path):
         url = url[:url.rfind(".")]+".png";
