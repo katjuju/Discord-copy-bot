@@ -4,7 +4,10 @@ import requests
 import os
 import shutil
 
+from file.update.GuildFileUpdater import *
+
 from utils.EmbedStatus import *
+from utils.const import *;
 
 class GuildFile:
     def __init__(self, bot):
@@ -13,8 +16,12 @@ class GuildFile:
 
     def loadGuild(self, guildId):
         file = open("guilds/"+guildId+"/guild.json", "r");
-        return json.load(file);
+        return self.updateGuildModel(json.load(file));
 
+
+    def updateGuildModel(self, guildModel):
+        updater = GuildFileUpdater(self.bot);
+        return updater.updateToLatestVersion(guildModel);
 
     async def saveGuild(self, guildModel, channel=None):
         basePath = "guilds/"+str(guildModel.id)+"_"+guildModel.name.replace(" ", "_")+"/";
@@ -41,7 +48,11 @@ class GuildFile:
 
         self.bot.log.info("Saving Guild informations");
         file = open(basePath+"guild.json", "w");
-        file.write(json.dumps(guildModel.__dict__, indent=4));
+
+        guildDict = guildModel.__dict__;
+        guildDict["__version__"] = GUILD_FILE_VERSION;
+
+        file.write(json.dumps(guildDict, indent=4));
 
         await self.embedStatus.setStatus(CONST_STATUS_OK);
 
@@ -51,12 +62,12 @@ class GuildFile:
 
         await self.embedStatus.setStatus(CONST_STATUS_OK);
 
-
         self.bot.log.info("Saving Guild's emojis");
         for emoji in guildModel.emojis:
             self.savePicture(emoji["url"], basePath+"emojis/"+str(emoji["id"]));
 
         await self.embedStatus.setStatus(CONST_STATUS_OK);
+
 
     def savePicture(self, url, path):
         url = url[:url.rfind(".")]+".png";

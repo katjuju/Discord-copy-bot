@@ -29,7 +29,7 @@ class PasteDiscordCommand(Command):
         guildFile = GuildFile(self.bot);
         try:
             guildModel = guildFile.loadGuild(guildIdToRestore);
-        except:
+        except IOError:
             errorMsg = "The \"guild.json\" file can't be found. Did you already saved this server?";
             self.bot.log.error(errorMsg);
             await msg.channel.send(errorMsg);

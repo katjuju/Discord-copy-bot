@@ -1,3 +1,5 @@
+GUILD_FILE_VERSION = 1;
+
 # Pasting guild consts
 CONST_PASTE_GENERAL = "general";
 CONST_PASTE_ROLES = "roles";
