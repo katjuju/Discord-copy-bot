@@ -233,7 +233,8 @@ class PasteGuildExecutor:
         await self.guild.edit(
             afk_channel=afkChannel,
             afk_timeout=self.guildModel["afkTimeout"],
-            system_channel=system_channel
+            system_channel=system_channel,
+            system_channel_flags=discord.SystemChannelFlags(**self.guildModel["system_channel_flags"])
         );
 
         await self.embedStatus.setStatus(CONST_STATUS_OK);

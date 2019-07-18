@@ -7,6 +7,7 @@ from model.MemberModel import *
 from model.PermissionsModel import *
 from model.RoleModel import *
 from model.BanModel import *
+from model.SystemChannelFlags import *
 
 class GuildModel:
 
@@ -30,6 +31,7 @@ class GuildModel:
         self.default_message_notifications = None;
         self.explicit_content_filter = None;
         self.system_channel = None;
+        self.system_channel_flags = None;
 
 
     async def fillFromGuild(self, bot, guild):
@@ -47,6 +49,10 @@ class GuildModel:
         self.explicit_content_filter = guild.explicit_content_filter.value;
         if guild.system_channel != None:
             self.system_channel = guild.system_channel.id;
+
+        systemChannelFlags = SystemChannelFlags();
+        systemChannelFlags.fillFromSystemChannelFlags(guild.system_channel_flags);
+        self.system_channel_flags = systemChannelFlags.__dict__;
 
         self.roles = list();
         for role in guild.roles:
