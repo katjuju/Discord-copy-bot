@@ -1,6 +1,6 @@
 {
 	"keys" : {
-		"discordBotToken" : ""
+		"discordBotToken" : "My super secret discord token goes here"
 	},
 	"commands" : {
 		"discordCopy" : "copy",
