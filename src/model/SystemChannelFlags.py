@@ -8,5 +8,3 @@ class SystemChannelFlags:
     def fillFromSystemChannelFlags(self, systemChannelFlags):
         self.join_notifications = systemChannelFlags.join_notifications;
         self.premium_subscriptions = systemChannelFlags.premium_subscriptions;
-
-        print(str(self.join_notifications))
