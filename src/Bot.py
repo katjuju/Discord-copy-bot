@@ -15,7 +15,7 @@ class Bot(discord.Client):
 		self.log = Logger();
 		self.config = ConfigFile(self);
 
-		if(self.config.configError):
+		if(not self.config.read()):
 			sys.exit();
 
 		self.commands = [CopyDiscordCommand(self), PasteDiscordCommand(self)];
@@ -23,7 +23,6 @@ class Bot(discord.Client):
 
 	async def on_ready(self):
 		await self.user.edit(username="Discord Copy");
-		await self.change_presence(activity=discord.Game(name=self.config.getDiscordCopyCommand()));
 		self.log.info("Bot online!");
 
 
@@ -31,6 +30,7 @@ class Bot(discord.Client):
 		for command in self.commands:
 			if(await command.processMessage(msg)):
 				break;
+
 
 	def runBot(self):
 		self.run(self.config.getDiscordToken());
