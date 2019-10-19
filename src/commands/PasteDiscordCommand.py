@@ -68,6 +68,7 @@ class PasteGuildExecutor:
 
         self.bot.log.info("Discord restored!");
 
+
     async def pasteGuildSettings(self):
         self.bot.log.info("Restoring Guild settings");
 
@@ -89,6 +90,7 @@ class PasteGuildExecutor:
 
         message = "The Discord server you pasted had \"Two-Factor Authentication\" enabled. Please, ask the owner to re-enable it on this Discord server." if self.guildModel["mfaLevel"] else "";
         await self.embedStatus.setStatus(CONST_STATUS_OK, message=message);
+
 
     async def pasteGuildRoles(self):
         self.bot.log.info("Restoring Guild roles");

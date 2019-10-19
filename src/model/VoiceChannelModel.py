@@ -8,6 +8,7 @@ class VoiceChannelModel(GuildChannelModel):
         self.bitrate = None;
         self.user_limit = None;
 
+
     def fillFromChannel(self, channel):
         super(VoiceChannelModel, self).fillFromChannel(channel)
 

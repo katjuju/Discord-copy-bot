@@ -9,6 +9,7 @@ class GuildChannelModel:
         self.overwrites = None;
         self.parentId = None;
 
+
     def fillFromChannel(self, channel):
         self.id = channel.id;
         self.name = channel.name;

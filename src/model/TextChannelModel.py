@@ -9,6 +9,7 @@ class TextChannelModel(GuildChannelModel):
         self.topic = None;
         self.slowmode_delay = None;
 
+
     def fillFromChannel(self, channel):
         super(TextChannelModel, self).fillFromChannel(channel)
 

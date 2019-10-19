@@ -5,6 +5,7 @@ class GuildFileUpdater:
     def __init__(self, bot):
         self.bot = bot;
 
+
     def updateToLatestVersion(self, guildModel):
         updater = self.findUpdater(guildModel["__version__"]);
         if(updater == None):

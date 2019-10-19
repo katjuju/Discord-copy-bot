@@ -7,6 +7,7 @@ from file.GuildFile import *
 from model.GuildModel import *
 
 class CopyDiscordCommand(Command):
+	
     def __init__(self, bot):
         Command.__init__(self, bot.config.getDiscordCopyCommand(), bot);
 

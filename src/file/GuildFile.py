@@ -23,6 +23,7 @@ class GuildFile:
         updater = GuildFileUpdater(self.bot);
         return updater.updateToLatestVersion(guildModel);
 
+
     async def saveGuild(self, guildModel, channel=None):
         basePath = "guilds/"+str(guildModel.id)+"_"+guildModel.name.replace(" ", "_")+"/";
 

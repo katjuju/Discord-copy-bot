@@ -3,6 +3,7 @@ class Command:
 		self.commandLabel = commandLabel;
 		self.bot = bot;
 
+
 	async def processMessage(self, msg):
 		if(msg.author.bot):
 			return;
@@ -13,6 +14,7 @@ class Command:
 			return True;
 
 		return False;
+
 
 	async def run(self, msg):
 		pass;
