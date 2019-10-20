@@ -1,35 +1,41 @@
-from utils.EmbedStatus import *
+from executor.Executor import *
 
 from utils.const import *
 
 import discord
 
-class ExecutorPasteGuild:
+class ExecutorPasteGuild(Executor):
 
-    def __init__(self, bot, guild, guildModel, guildIdToRestore, msg):
+    def __init__(self, bot, guild, guildModel, guildIdToRestore, listener):
+        Executor.__init__(self, None);
+
         self.bot = bot;
         self.guild = guild;
         self.guildModel = guildModel;
         self.guildIdToRestore = guildIdToRestore;
-        self.msg = msg;
+        self.listener = listener;
 
 
     async def pasteGuild(self):
-        self.embedStatus = EmbedStatus("Pasting Discord");
-        self.embedStatus.addField("General Settings");
-        self.embedStatus.addField("Roles");
-        self.embedStatus.addField("Emojis");
-        self.embedStatus.addField("Channels");
-        self.embedStatus.addField("Bans");
-        self.embedStatus.addField("Post channels settings");
-        await self.embedStatus.post(self.msg.channel);
-
+        await self.listener.taskChanged("General Settings");
         await self.pasteGuildSettings();
+
+        await self.listener.taskChanged("Roles");
         await self.pasteGuildRoles();
+
+        await self.listener.taskChanged("Emojis");
         await self.pasteGuildEmojis();
+
+        await self.listener.taskChanged("Channels");
         await self.pasteGuildChannels();
+
+        await self.listener.taskChanged("Bans");
         await self.pasteGuildBans();
+
+        await self.listener.taskChanged("Post channels settings");
         await self.pasteGuildPostChannelSettings();
+
+        await self.listener.completed();
 
         self.bot.log.info("Discord restored!");
 
@@ -54,7 +60,7 @@ class ExecutorPasteGuild:
         );
 
         message = "The Discord server you pasted had \"Two-Factor Authentication\" enabled. Please, ask the owner to re-enable it on this Discord server." if self.guildModel["mfaLevel"] else "";
-        await self.embedStatus.setStatus(CONST_STATUS_OK, message=message);
+        await self.listener.taskFinished(message);
 
 
     async def pasteGuildRoles(self):
@@ -88,12 +94,12 @@ class ExecutorPasteGuild:
                 except discord.errors.HTTPException:
                     errorMsg = "You reached the role limit.";
                     self.bot.log.error(errorMsg);
-                    await self.embedStatus.setStatus(CONST_STATUS_FAIL, message=errorMsg);
+                    await self.listener.taskError(errorMsg);
                     return;
 
             self.newRoles[role["id"]] = roleCreated;
 
-        await self.embedStatus.setStatus(CONST_STATUS_OK);
+        await self.listener.taskFinished();
 
 
     async def pasteGuildEmojis(self):
@@ -112,10 +118,10 @@ class ExecutorPasteGuild:
             except discord.errors.HTTPException:
                 errorMsg = "You reached the emoji limit.";
                 self.bot.log.error(errorMsg);
-                await self.embedStatus.setStatus(CONST_STATUS_FAIL, message=errorMsg);
+                await self.listener.taskError(errorMsg);
                 return;
 
-        await self.embedStatus.setStatus(CONST_STATUS_OK);
+        await self.listener.taskFinished();
 
 
     async def pasteGuildChannels(self):
@@ -175,7 +181,7 @@ class ExecutorPasteGuild:
 
             self.newChannels[channel["id"]] = channelCreated;
 
-        await self.embedStatus.setStatus(CONST_STATUS_OK);
+        await self.listener.taskFinished();
 
 
     async def pasteGuildBans(self):
@@ -185,7 +191,7 @@ class ExecutorPasteGuild:
             banUser = await self.bot.fetch_user(ban["user"]);
             await self.guild.ban(banUser, reason=ban["reason"], delete_message_days=0);
 
-        await self.embedStatus.setStatus(CONST_STATUS_OK);
+        await self.listener.taskFinished();
 
 
     async def pasteGuildPostChannelSettings(self):
@@ -204,7 +210,7 @@ class ExecutorPasteGuild:
             system_channel_flags=discord.SystemChannelFlags(**self.guildModel["system_channel_flags"])
         );
 
-        await self.embedStatus.setStatus(CONST_STATUS_OK);
+        await self.listener.taskFinished();
 
 
     def getOverwrites(self, permissions):

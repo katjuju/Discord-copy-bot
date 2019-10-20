@@ -1,4 +1,5 @@
 from executor.ExecutorPasteGuild import *
+from executor.ExecutorListener import *
 
 from commands.Command import *
 
@@ -6,9 +7,10 @@ from file.GuildFile import *
 
 import discord
 
-class PasteDiscordCommand(Command):
+class PasteDiscordCommand(Command, ExecutorListener):
     def __init__(self, bot):
         Command.__init__(self, bot.config.getDiscordPasteCommand(), bot);
+        ExecutorListener.__init__(self);
 
 
     async def run(self, msg):
@@ -33,5 +35,22 @@ class PasteDiscordCommand(Command):
             await msg.channel.send(errorMsg);
             return;
 
-        executor = ExecutorPasteGuild(self.bot, guild, guildModel, guildIdToRestore, msg);
+        self.embedStatus = EmbedStatus("Pasting Discord");
+        self.embedStatus.addField("General Settings");
+        self.embedStatus.addField("Roles");
+        self.embedStatus.addField("Emojis");
+        self.embedStatus.addField("Channels");
+        self.embedStatus.addField("Bans");
+        self.embedStatus.addField("Post channels settings");
+        await self.embedStatus.post(msg.channel);
+
+        executor = ExecutorPasteGuild(self.bot, guild, guildModel, guildIdToRestore, self);
         await executor.pasteGuild();
+
+
+    async def taskFinished(self, details=""):
+        await self.embedStatus.setStatus(CONST_STATUS_OK, details);
+
+
+    async def taskError(self, details):
+        await self.embedStatus.setStatus(CONST_STATUS_FAIL, details);
