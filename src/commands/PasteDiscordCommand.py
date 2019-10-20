@@ -18,7 +18,6 @@ class PasteDiscordCommand(Command, ExecutorListener):
             await msg.channel.send("Only user with the \"Manage Guild\" permission can execute this command.");
             return
 
-        guild = msg.guild;
         args = msg.content.split(" ");
         if len(args) <= 2:
             await msg.channel.send("Please, tell me the guild to paste...");
@@ -26,10 +25,8 @@ class PasteDiscordCommand(Command, ExecutorListener):
 
         guildIdToRestore = args[2];
 
-        guildFile = GuildFile(self.bot);
-        try:
-            guildModel = guildFile.loadGuild(guildIdToRestore);
-        except IOError:
+        guildModel = GuildFile.load(guildIdToRestore);
+        if(guildModel == None):
             errorMsg = "The \"guild.json\" file can't be found. Did you already saved this server?";
             self.bot.log.error(errorMsg);
             await msg.channel.send(errorMsg);
@@ -44,7 +41,7 @@ class PasteDiscordCommand(Command, ExecutorListener):
         self.embedStatus.addField("Post channels settings");
         await self.embedStatus.post(msg.channel);
 
-        executor = ExecutorPasteGuild(self.bot, guild, guildModel, guildIdToRestore, self);
+        executor = ExecutorPasteGuild(self.bot, msg.guild, guildModel, guildIdToRestore, self);
         await executor.pasteGuild();
 
 

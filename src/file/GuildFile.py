@@ -14,10 +14,15 @@ class GuildFile:
     	self.bot = bot;
 
 
-    def loadGuild(self, guildId):
-        file = open("guilds/"+guildId+"/guild.json", "r");
+    @staticmethod
+    def load(guildId):
+        guildModel = None;
 
-        guildModel = json.load(file);
+        try:
+            file = open("guilds/"+guildId+"/guild.json", "r");
+            guildModel = json.load(file);
+        except IOError:
+            return None;
 
         updater = GuildFileUpdater(self.bot);
         return updater.updateToLatestVersion(guildModel);
