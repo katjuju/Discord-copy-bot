@@ -16,11 +16,10 @@ class GuildFile:
 
     def loadGuild(self, guildId):
         file = open("guilds/"+guildId+"/guild.json", "r");
-        return self.updateGuildModel(json.load(file));
 
+		guildModel = json.load(file);
 
-    def updateGuildModel(self, guildModel):
-        updater = GuildFileUpdater(self.bot);
+		updater = GuildFileUpdater(self.bot);
         return updater.updateToLatestVersion(guildModel);
 
 

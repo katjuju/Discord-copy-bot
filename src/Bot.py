@@ -10,11 +10,14 @@ import discord
 import sys
 
 class Bot(discord.Client):
+
 	def __init__(self):
 		discord.Client.__init__(self);
+
 		self.log = Logger();
 		self.config = ConfigFile(self);
 
+		# If we can't have a valid config.json file we can't have a valid api key for the bot. So we stop
 		if(not self.config.read()):
 			sys.exit();
 
@@ -26,6 +29,7 @@ class Bot(discord.Client):
 		self.log.info("Bot online!");
 
 
+	# Check if the message is a command
 	async def on_message(self, msg):
 		for command in self.commands:
 			if(await command.processMessage(msg)):
