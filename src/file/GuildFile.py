@@ -17,9 +17,9 @@ class GuildFile:
     def loadGuild(self, guildId):
         file = open("guilds/"+guildId+"/guild.json", "r");
 
-		guildModel = json.load(file);
+        guildModel = json.load(file);
 
-		updater = GuildFileUpdater(self.bot);
+        updater = GuildFileUpdater(self.bot);
         return updater.updateToLatestVersion(guildModel);
 
 
