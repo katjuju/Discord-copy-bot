@@ -7,7 +7,7 @@ from file.GuildFile import *
 
 import discord
 
-class PasteDiscordCommand(Command, ExecutorListener):
+class CommandPasteGuild(Command, ExecutorListener):
     def __init__(self, bot):
         Command.__init__(self, bot.config.getDiscordPasteCommand(), bot);
         ExecutorListener.__init__(self);

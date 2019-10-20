@@ -1,5 +1,5 @@
 from commands.CopyDiscordCommand import *
-from commands.PasteDiscordCommand import *
+from commands.CommandPasteGuild import *
 
 from file.ConfigFile import *
 
@@ -21,7 +21,7 @@ class Bot(discord.Client):
 		if(not self.config.read()):
 			sys.exit();
 
-		self.commands = [CopyDiscordCommand(self), PasteDiscordCommand(self)];
+		self.commands = [CopyDiscordCommand(self), CommandPasteGuild(self)];
 
 
 	async def on_ready(self):
