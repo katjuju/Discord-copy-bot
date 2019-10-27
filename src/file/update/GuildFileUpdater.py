@@ -4,8 +4,8 @@ from utils.Logger import *
 
 class GuildFileUpdater:
 
-    def __init__(self, bot):
-        self.bot = bot;
+    def __init__(self):
+        pass;
 
     # Apply every update to the guild model
     def updateToLatestVersion(self, guildModel):
@@ -21,6 +21,6 @@ class GuildFileUpdater:
     # Return the FileUpdate for a specific version
     def findUpdater(self, guildModelVersion):
         if(guildModelVersion == 1):
-            return FileUpdateV2(self.bot);
+            return FileUpdateV2();
 
         return None;

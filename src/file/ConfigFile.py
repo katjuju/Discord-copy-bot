@@ -4,8 +4,9 @@ import json
 
 class ConfigFile:
 
-	def __init__(self, bot):
-		self.bot = bot;
+	def __init__(self):
+		pass;
+
 
 	# Read the file and return False if an error occured
 	def read(self):

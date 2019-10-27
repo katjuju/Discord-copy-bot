@@ -5,9 +5,7 @@ class AbstractFileUpdate:
     def __init__(self, oldVersion, newVersion, bot):
         self.oldVersion = oldVersion;
         self.newVersion = newVersion;
-
-        self.bot = bot;
-
+        
 
     # If the guildModel is in an older version we update it into a newer
     def process(self, guildModel):

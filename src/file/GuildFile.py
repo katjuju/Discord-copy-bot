@@ -9,8 +9,8 @@ from utils.EmbedStatus import *
 from utils.Logger import *
 
 class GuildFile:
-    def __init__(self, bot):
-    	self.bot = bot;
+    def __init__(self):
+        pass;
 
 
     @staticmethod
@@ -23,7 +23,7 @@ class GuildFile:
         except IOError:
             return None;
 
-        updater = GuildFileUpdater(self.bot);
+        updater = GuildFileUpdater();
         return updater.updateToLatestVersion(guildModel);
 
 
