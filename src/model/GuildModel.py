@@ -34,7 +34,7 @@ class GuildModel:
         self.system_channel_flags = None;
 
 
-    async def fillFromGuild(self, bot, guild):
+    async def fillFromGuild(self, guild):
         self.id = guild.id;
         self.name = guild.name;
         self.region = guild.region.value;

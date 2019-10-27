@@ -1,4 +1,5 @@
-from Bot import *
+from executor.ExecutorCopyGuild import *
+from executor.ExecutorListener import *
 
 from commands.Command import *
 
@@ -6,10 +7,13 @@ from file.GuildFile import *
 
 from model.GuildModel import *
 
-class CommandCopyGuild(Command):
+from utils.Logger import *
+
+class CommandCopyGuild(Command, ExecutorListener):
 
     def __init__(self, bot):
         Command.__init__(self, bot.config.getDiscordCopyCommand(), bot);
+        ExecutorListener.__init__(self);
 
 
     async def run(self, msg):
@@ -17,12 +21,24 @@ class CommandCopyGuild(Command):
             await msg.channel.send("Only user with the \"Manage Guild\" permission can execute this command.");
             return
 
-        guild = msg.guild;
+        self.embedStatus = EmbedStatus("Copying Discord");
+        self.embedStatus.addField("Set up save folder");
+        self.embedStatus.addField("Guild informations");
+        self.embedStatus.addField("Guild's Icon");
+        self.embedStatus.addField("Guild's emojis");
+        await self.embedStatus.post(msg.channel);
 
-        guildModel = GuildModel();
-        await guildModel.fillFromGuild(self.bot, guild);
+        executor = ExecutorCopyGuild(msg.guild, self);
+        await executor.copyGuild();
 
-        file = GuildFile(self.bot)
-        await file.saveGuild(guildModel, msg.channel);
 
-        self.bot.log.info("Discord saved");
+    async def taskFinished(self, details=""):
+        await self.embedStatus.setStatus(CONST_STATUS_OK, details);
+
+        
+    async def taskError(self, details):
+        await self.embedStatus.setStatus(CONST_STATUS_FAIL, details);
+
+
+    async def completed(self):
+    	Logger.info("Discord saved");
