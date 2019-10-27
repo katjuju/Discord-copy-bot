@@ -29,13 +29,13 @@ class CommandCopyGuild(Command, ExecutorListener):
         await self.embedStatus.post(msg.channel);
 
         executor = ExecutorCopyGuild(msg.guild, self);
-        await executor.copyGuild();
+        await executor.run();
 
 
     async def taskFinished(self, details=""):
         await self.embedStatus.setStatus(CONST_STATUS_OK, details);
 
-        
+
     async def taskError(self, details):
         await self.embedStatus.setStatus(CONST_STATUS_FAIL, details);
 

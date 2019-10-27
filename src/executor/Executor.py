@@ -4,5 +4,9 @@ class Executor:
         self.listener = listener;
 
 
+    def run(self):
+        pass;
+
+
     def setListener(self, listener):
         self.listener = listener;

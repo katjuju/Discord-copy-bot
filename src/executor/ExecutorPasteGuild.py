@@ -17,7 +17,7 @@ class ExecutorPasteGuild(Executor):
         self.listener = listener;
 
 
-    async def pasteGuild(self):
+    async def run(self):
         await self.listener.taskChanged("General Settings");
         await self.pasteGuildSettings();
 

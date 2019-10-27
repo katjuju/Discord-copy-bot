@@ -20,7 +20,7 @@ class ExecutorCopyGuild(Executor):
         self.listener = listener;
 
 
-    async def copyGuild(self):
+    async def run(self):
         guildModel = await GuildFile.createFromGuild(self.guild);
 
         basePath = "guilds/"+str(self.guild.id)+"_"+self.guild.name.replace(" ", "_")+"/";

@@ -44,7 +44,7 @@ class CommandPasteGuild(Command, ExecutorListener):
         await self.embedStatus.post(msg.channel);
 
         executor = ExecutorPasteGuild(self.bot, msg.guild, guildModel, guildIdToRestore, self);
-        await executor.pasteGuild();
+        await executor.run();
 
 
     async def taskFinished(self, details=""):
