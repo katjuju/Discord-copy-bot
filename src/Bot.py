@@ -14,7 +14,7 @@ class Bot(discord.Client):
 	def __init__(self):
 		discord.Client.__init__(self);
 
-		self.config = ConfigFile(self);
+		self.config = ConfigFile();
 
 		# If we can't have a valid config.json file we can't have a valid api key for the bot. So we stop
 		if(not self.config.read()):
