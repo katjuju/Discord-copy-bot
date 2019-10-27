@@ -1,7 +1,6 @@
 from executor.Executor import *
 
 from utils.const import *
-from utils.Logger import *
 
 import discord
 
@@ -18,31 +17,18 @@ class ExecutorPasteGuild(Executor):
 
 
     async def run(self):
-        await self.listener.taskChanged("General Settings");
         await self.pasteGuildSettings();
-
-        await self.listener.taskChanged("Roles");
         await self.pasteGuildRoles();
-
-        await self.listener.taskChanged("Emojis");
         await self.pasteGuildEmojis();
-
-        await self.listener.taskChanged("Channels");
         await self.pasteGuildChannels();
-
-        await self.listener.taskChanged("Bans");
         await self.pasteGuildBans();
-
-        await self.listener.taskChanged("Post channels settings");
         await self.pasteGuildPostChannelSettings();
 
         await self.listener.completed();
 
-        Logger.info("Discord restored!");
-
 
     async def pasteGuildSettings(self):
-        Logger.info("Restoring Guild settings");
+        await self.listener.taskChanged("Restoring Guild settings");
 
         guildIcon = None;
         try:
@@ -60,12 +46,11 @@ class ExecutorPasteGuild(Executor):
             explicit_content_filter=discord.ContentFilter(self.guildModel["explicit_content_filter"])
         );
 
-        message = "The Discord server you pasted had \"Two-Factor Authentication\" enabled. Please, ask the owner to re-enable it on this Discord server." if self.guildModel["mfaLevel"] else "";
-        await self.listener.taskFinished(message);
+        await self.listener.taskFinished("The Discord server you pasted had \"Two-Factor Authentication\" enabled. Please, ask the owner to re-enable it on this Discord server." if self.guildModel["mfaLevel"] else "";);
 
 
     async def pasteGuildRoles(self):
-        Logger.info("Restoring Guild roles");
+        await self.listener.taskChanged("Restoring Guild roles");
 
         self.newRoles = dict();
         for role in self.sortList(self.guildModel["roles"], True):
@@ -93,9 +78,7 @@ class ExecutorPasteGuild(Executor):
                         mentionable=role["mentionable"]
                     );
                 except discord.errors.HTTPException:
-                    errorMsg = "You reached the role limit.";
-                    Logger.error(errorMsg);
-                    await self.listener.taskError(errorMsg);
+                    await self.listener.taskError("You reached the role limit.");
                     return;
 
             self.newRoles[role["id"]] = roleCreated;
@@ -104,7 +87,7 @@ class ExecutorPasteGuild(Executor):
 
 
     async def pasteGuildEmojis(self):
-        Logger.info("Restoring Guild emojis");
+        await self.listener.taskChanged("Restoring Guild emojis");
 
         for emoji in self.guildModel["emojis"]:
             emojiByte = None;
@@ -117,16 +100,14 @@ class ExecutorPasteGuild(Executor):
                     image=emojiByte
                 );
             except discord.errors.HTTPException:
-                errorMsg = "You reached the emoji limit.";
-                Logger.error(errorMsg);
-                await self.listener.taskError(errorMsg);
+                await self.listener.taskError("You reached the emoji limit.");
                 return;
 
         await self.listener.taskFinished();
 
 
     async def pasteGuildChannels(self):
-        Logger.info("Restoring Guild channels");
+        await self.listener.taskChanged("Restoring Guild channels");
 
         self.newChannels = dict();
         for channel in self.sortList(self.guildModel["categories"]):
@@ -186,7 +167,7 @@ class ExecutorPasteGuild(Executor):
 
 
     async def pasteGuildBans(self):
-        Logger.info("Restoring Guild bans");
+        await self.listener.taskChanged("Restoring Guild bans");
 
         for ban in self.guildModel["bans"]:
             banUser = await self.bot.fetch_user(ban["user"]);
@@ -196,7 +177,7 @@ class ExecutorPasteGuild(Executor):
 
 
     async def pasteGuildPostChannelSettings(self):
-        Logger.info("Restoring Guild Post channel settings (AFK, System channel)");
+        await self.listener.taskChanged("Restoring Guild Post channel settings (AFK, System channel)");
 
         system_channel = None;
         if self.guildModel["system_channel"] != None:

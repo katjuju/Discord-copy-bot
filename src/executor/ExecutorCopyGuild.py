@@ -3,7 +3,6 @@ from executor.Executor import *
 from file.GuildFile import *
 
 from utils.const import *
-from utils.Logger import *
 
 import discord
 
@@ -32,8 +31,8 @@ class ExecutorCopyGuild(Executor):
 
 
     async def removeOldSave(self, basePath):
-        await self.listener.taskChanged("Set up save folder");
-        Logger.info("Setting up save folder");
+        await self.listener.taskChanged("Setting up save folder");
+
         try:
             if(os.path.exists(basePath)):
                 shutil.rmtree(basePath);
@@ -60,6 +59,7 @@ class ExecutorCopyGuild(Executor):
 
     async def saveGuildIcon(self, basePath, guildModel):
         await self.listener.taskChanged("Saving Guild's Icon");
+
         if guildModel.icon != None:
             self.savePicture(guildModel.icon_url, basePath+"icon");
 
@@ -68,6 +68,7 @@ class ExecutorCopyGuild(Executor):
 
     async def saveEmojis(self, basePath, guildModel):
         await self.listener.taskChanged("Saving Guild's emojis");
+
         for emoji in guildModel.emojis:
             self.savePicture(emoji["url"], basePath+"emojis/"+str(emoji["id"]));
 

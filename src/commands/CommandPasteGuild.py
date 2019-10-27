@@ -51,5 +51,14 @@ class CommandPasteGuild(Command, ExecutorListener):
         await self.embedStatus.setStatus(CONST_STATUS_OK, details);
 
 
+    async def taskChanged(self, newTaskName):
+        Logger.info(newTaskName);
+
+
     async def taskError(self, details):
         await self.embedStatus.setStatus(CONST_STATUS_FAIL, details);
+        Logger.error(details);
+
+
+    async def completed(self):
+        Logger.info("Discord restored");
