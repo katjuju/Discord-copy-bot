@@ -4,17 +4,21 @@ class Logger:
 		pass;
 
 
-	def info(self, msg):
+	@staticmethod
+	def info(msg):
 		print("[INFO] " + str(msg));
 
 
-	def warning(self, msg):
+	@staticmethod
+	def warning(msg):
 		print("[WARNING] " + str(msg));
 
 
-	def error(self, msg):
+	@staticmethod
+	def error(msg):
 		print("[ERROR] " + str(msg));
 
 
-	def debug(self, msg):
+	@staticmethod
+	def debug(msg):
 		print("[DEBUG] " + str(msg));

@@ -5,6 +5,8 @@ from commands.Command import *
 
 from file.GuildFile import *
 
+from utils.Logger import *
+
 import discord
 
 class CommandPasteGuild(Command, ExecutorListener):
@@ -28,7 +30,7 @@ class CommandPasteGuild(Command, ExecutorListener):
         guildModel = GuildFile.load(guildIdToRestore);
         if(guildModel == None):
             errorMsg = "The \"guild.json\" file can't be found. Did you already saved this server?";
-            self.bot.log.error(errorMsg);
+            Logger.error(errorMsg);
             await msg.channel.send(errorMsg);
             return;
 

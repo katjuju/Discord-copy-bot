@@ -14,7 +14,6 @@ class Bot(discord.Client):
 	def __init__(self):
 		discord.Client.__init__(self);
 
-		self.log = Logger();
 		self.config = ConfigFile(self);
 
 		# If we can't have a valid config.json file we can't have a valid api key for the bot. So we stop
@@ -26,7 +25,7 @@ class Bot(discord.Client):
 
 	async def on_ready(self):
 		await self.user.edit(username="Discord Copy");
-		self.log.info("Bot online!");
+		Logger.info("Bot online!");
 
 
 	# Check if the message is a command

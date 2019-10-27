@@ -1,3 +1,5 @@
+from utils.Logger import *
+
 import json
 
 class ConfigFile:
@@ -12,7 +14,7 @@ class ConfigFile:
 
 			self.config = json.load(file);
 		except:
-			self.bot.log.error("The \"config.json\" file is missing or corrupted. You can create a new one from the \"config-default.json\" file.");
+			Logger.error("The \"config.json\" file is missing or corrupted. You can create a new one from the \"config-default.json\" file.");
 			return False;
 
 		return True;

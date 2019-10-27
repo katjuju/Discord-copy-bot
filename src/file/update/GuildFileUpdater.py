@@ -1,5 +1,7 @@
 from file.update.FileUpdateV2 import *
 
+from utils.Logger import *
+
 class GuildFileUpdater:
 
     def __init__(self, bot):
@@ -9,7 +11,7 @@ class GuildFileUpdater:
     def updateToLatestVersion(self, guildModel):
         updater = self.findUpdater(guildModel["__version__"]);
         if(updater == None):
-            self.bot.log.info("Guild file updated");
+            Logger.info("Guild file updated");
             return guildModel;
 
         guildModel = updater.process(guildModel);

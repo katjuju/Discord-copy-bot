@@ -1,3 +1,5 @@
+from utils.Logger import *
+
 class AbstractFileUpdate:
 
     def __init__(self, oldVersion, newVersion, bot):
@@ -10,7 +12,7 @@ class AbstractFileUpdate:
     # If the guildModel is in an older version we update it into a newer
     def process(self, guildModel):
         if(guildModel["__version__"] == self.oldVersion):
-            self.bot.log.info("Updating file into V"+str(self.newVersion));
+            Logger.info("Updating file into V"+str(self.newVersion));
 
             guildModel = self.doUpdate(guildModel);
             guildModel["__version__"] = self.newVersion;

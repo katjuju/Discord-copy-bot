@@ -1,6 +1,7 @@
 from executor.Executor import *
 
 from utils.const import *
+from utils.Logger import *
 
 import discord
 
@@ -37,11 +38,11 @@ class ExecutorPasteGuild(Executor):
 
         await self.listener.completed();
 
-        self.bot.log.info("Discord restored!");
+        Logger.info("Discord restored!");
 
 
     async def pasteGuildSettings(self):
-        self.bot.log.info("Restoring Guild settings");
+        Logger.info("Restoring Guild settings");
 
         guildIcon = None;
         try:
@@ -64,7 +65,7 @@ class ExecutorPasteGuild(Executor):
 
 
     async def pasteGuildRoles(self):
-        self.bot.log.info("Restoring Guild roles");
+        Logger.info("Restoring Guild roles");
 
         self.newRoles = dict();
         for role in self.sortList(self.guildModel["roles"], True):
@@ -93,7 +94,7 @@ class ExecutorPasteGuild(Executor):
                     );
                 except discord.errors.HTTPException:
                     errorMsg = "You reached the role limit.";
-                    self.bot.log.error(errorMsg);
+                    Logger.error(errorMsg);
                     await self.listener.taskError(errorMsg);
                     return;
 
@@ -103,7 +104,7 @@ class ExecutorPasteGuild(Executor):
 
 
     async def pasteGuildEmojis(self):
-        self.bot.log.info("Restoring Guild emojis");
+        Logger.info("Restoring Guild emojis");
 
         for emoji in self.guildModel["emojis"]:
             emojiByte = None;
@@ -117,7 +118,7 @@ class ExecutorPasteGuild(Executor):
                 );
             except discord.errors.HTTPException:
                 errorMsg = "You reached the emoji limit.";
-                self.bot.log.error(errorMsg);
+                Logger.error(errorMsg);
                 await self.listener.taskError(errorMsg);
                 return;
 
@@ -125,7 +126,7 @@ class ExecutorPasteGuild(Executor):
 
 
     async def pasteGuildChannels(self):
-        self.bot.log.info("Restoring Guild channels");
+        Logger.info("Restoring Guild channels");
 
         self.newChannels = dict();
         for channel in self.sortList(self.guildModel["categories"]):
@@ -185,7 +186,7 @@ class ExecutorPasteGuild(Executor):
 
 
     async def pasteGuildBans(self):
-        self.bot.log.info("Restoring Guild bans");
+        Logger.info("Restoring Guild bans");
 
         for ban in self.guildModel["bans"]:
             banUser = await self.bot.fetch_user(ban["user"]);
@@ -195,7 +196,7 @@ class ExecutorPasteGuild(Executor):
 
 
     async def pasteGuildPostChannelSettings(self):
-        self.bot.log.info("Restoring Guild Post channel settings (AFK, System channel)");
+        Logger.info("Restoring Guild Post channel settings (AFK, System channel)");
 
         system_channel = None;
         if self.guildModel["system_channel"] != None:
