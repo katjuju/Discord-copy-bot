@@ -11,39 +11,39 @@ from utils.Logger import *
 
 class CommandCopyGuild(Command, ExecutorListener):
 
-    def __init__(self, bot):
-        Command.__init__(self, bot.config.getDiscordCopyCommand(), bot);
-        ExecutorListener.__init__(self);
+	def __init__(self, bot):
+		Command.__init__(self, bot.config.getDiscordCopyCommand(), bot);
+		ExecutorListener.__init__(self);
 
 
-    async def run(self, msg):
-        if not msg.author.guild_permissions.manage_guild:
-            await msg.channel.send("Only user with the \"Manage Guild\" permission can execute this command.");
-            return
+	async def run(self, msg):
+		if not msg.author.guild_permissions.manage_guild:
+			await msg.channel.send("Only user with the \"Manage Guild\" permission can execute this command.");
+			return
 
-        self.embedStatus = EmbedStatus("Copying Discord");
-        self.embedStatus.addField("Set up save folder");
-        self.embedStatus.addField("Guild informations");
-        self.embedStatus.addField("Guild's Icon");
-        self.embedStatus.addField("Guild's emojis");
-        await self.embedStatus.post(msg.channel);
+		self.embedStatus = EmbedStatus("Copying Discord");
+		self.embedStatus.addField("Set up save folder");
+		self.embedStatus.addField("Guild informations");
+		self.embedStatus.addField("Guild's Icon");
+		self.embedStatus.addField("Guild's emojis");
+		await self.embedStatus.post(msg.channel);
 
-        executor = ExecutorCopyGuild(msg.guild, self);
-        await executor.run();
-
-
-    async def taskFinished(self, details=""):
-        await self.embedStatus.setStatus(CONST_STATUS_OK, details);
+		executor = ExecutorCopyGuild(msg.guild, self);
+		await executor.run();
 
 
-    async def taskChanged(self, newTaskName):
-        Logger.info(newTaskName);
+	async def taskFinished(self, details=""):
+		await self.embedStatus.setStatus(CONST_STATUS_OK, details);
 
 
-    async def taskError(self, details):
-        await self.embedStatus.setStatus(CONST_STATUS_FAIL, details);
-        Logger.error(details);
+	async def taskChanged(self, newTaskName):
+		Logger.info(newTaskName);
 
 
-    async def completed(self):
-    	Logger.info("Discord saved");
+	async def taskError(self, details):
+		await self.embedStatus.setStatus(CONST_STATUS_FAIL, details);
+		Logger.error(details);
+
+
+	async def completed(self):
+		Logger.info("Discord saved");

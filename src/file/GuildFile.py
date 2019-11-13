@@ -9,27 +9,27 @@ from utils.EmbedStatus import *
 from utils.Logger import *
 
 class GuildFile:
-    def __init__(self):
-        pass;
+	def __init__(self):
+		pass;
 
 
-    @staticmethod
-    def load(guildId):
-        guildModel = None;
+	@staticmethod
+	def load(guildId):
+		guildModel = None;
 
-        try:
-            file = open("guilds/"+guildId+"/guild.json", "r");
-            guildModel = json.load(file);
-        except IOError:
-            return None;
+		try:
+			file = open("guilds/"+guildId+"/guild.json", "r");
+			guildModel = json.load(file);
+		except IOError:
+			return None;
 
-        updater = GuildFileUpdater();
-        return updater.updateToLatestVersion(guildModel);
+		updater = GuildFileUpdater();
+		return updater.updateToLatestVersion(guildModel);
 
 
-    @staticmethod
-    async def createFromGuild(guild):
-        guildModel = GuildModel();
-        await guildModel.fillFromGuild(guild);
+	@staticmethod
+	async def createFromGuild(guild):
+		guildModel = GuildModel();
+		await guildModel.fillFromGuild(guild);
 
-        return guildModel;
+		return guildModel;
